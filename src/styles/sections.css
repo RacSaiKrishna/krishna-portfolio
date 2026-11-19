@@ -91,6 +91,29 @@
 }
 .tx-sound:hover { border-color: var(--ion); color: var(--ion); }
 
+/* With a video: no tile. The frame loses its border and HUD, and its edges feather into the
+   page background so the speaker appears out of the dark. */
+.tx:has(.has-video) { max-width: none; margin-inline: calc(var(--gutter) * -1); width: calc(100% + var(--gutter) * 2); }
+@media (min-width: 900px) { .tx:has(.has-video) { width: 128%; margin: -4% -14% -4% -14%; } }
+.tx-frame.has-video {
+  border: 0; background: none; box-shadow: none;
+  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 44%, #000 38%, rgba(0, 0, 0, .6) 66%, transparent 96%);
+  mask-image: radial-gradient(ellipse 50% 50% at 50% 44%, #000 38%, rgba(0, 0, 0, .6) 66%, transparent 96%);
+}
+/* A dark vignette over the edges, so a light backdrop sinks into the page instead of glowing. */
+.tx-frame.has-video::after {
+  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(ellipse 50% 52% at 50% 42%, transparent 30%, rgba(5, 6, 13, .55) 58%, rgba(5, 6, 13, .92) 80%, var(--void) 100%);
+}
+.has-video .tx-corner, .has-video .tx-hud, .has-video .tx-scan { display: none; }
+.tx-cc {
+  min-height: 2.8em; margin: -2.4em auto 0; padding: 0 var(--gutter); max-width: 34ch; position: relative; z-index: 2;
+  text-align: center; font-size: 15px; line-height: 1.4; color: var(--ink); text-shadow: 0 1px 8px rgba(5, 6, 13, .9);
+}
+.tx:not(:has(.has-video)) .tx-cc { display: none; }
+.tx:has(.has-video) .tx-bar { padding-inline: var(--gutter); }
+@media (min-width: 900px) { .tx:has(.has-video) .tx-bar { padding-inline: 14%; } }
+
 .strip {
   position: relative; z-index: 1; display: grid; grid-template-columns: repeat(2, 1fr);
   border-top: 1px solid var(--line); border-left: 1px solid var(--line);

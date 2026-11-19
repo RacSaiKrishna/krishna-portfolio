@@ -52,6 +52,7 @@ mm.add(
     const g = global({ isDesktop, isMobile, reduceMotion });
     const env = { isDesktop, isMobile, reduceMotion, media, stars: g.stars, lenis: g.lenis };
     env.intro = loader(env);
+    env.intro.then(() => media.armVoice?.()); // voiceover may start once the intro is done
 
     const cleanups = [g.cleanup];
     let live = true;

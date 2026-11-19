@@ -249,13 +249,14 @@ export function soundRunning() { return Boolean(ctx && ctx.state === "running");
 /** True for a moment after audio first started, i.e. the press that is in progress unlocked it. */
 export function soundJustUnlocked() { return unlockedAt > 0 && performance.now() - unlockedAt < 1500; }
 
-/** Call fn whenever the audio engine starts or stops running. */
+/** Call fn whenever the audio engine starts or stops running, or the Sound switch changes. */
 export function onSoundState(fn) { watchers.add(fn); }
 
 export function setSound(on) {
   enabled = on;
   boot();
   if (master) master.gain.setTargetAtTime(on ? (ducked ? LEVEL * 0.35 : LEVEL) : 0, ctx.currentTime, 0.05);
+  watchers.forEach((fn) => fn()); // e.g. the hero voiceover follows the switch
 }
 
 /** Starts audio as early as the browser allows and voices every click. */

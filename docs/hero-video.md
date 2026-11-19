@@ -1,6 +1,6 @@
 # Talking hero video
 
-The hero frame plays a short muted loop of you talking, with captions. Visitors can press **Play with sound** to hear it from the start.
+The hero video has no frame: its edges fade into the dark page. While it is on screen the voiceover plays (after the visitor's first tap, click or key press, which browsers require); scrolling past it turns the voice off, and coming back turns it on again. The nav Sound switch and the **Mute** button silence it. Captions show below the video. A plain dark background in the recording blends best.
 
 ## Recording
 - Length: 20–30 seconds.

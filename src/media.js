@@ -26,7 +26,7 @@ const first = (obj) => Object.values(obj)[0];
 const byExt = (obj, ext) => Object.entries(obj).find(([k]) => k.endsWith(ext))?.[1];
 
 import { reduced } from "./motion.js";
-import { sfx } from "./sound.js";
+import { sfx, soundEnabled, onSoundState } from "./sound.js";
 
 export function setupMedia() {
   // The video, its captions and poster travel together: real set if a real video exists.
@@ -81,38 +81,110 @@ export function setupMedia() {
   video.hidden = false;
   sound.hidden = false;
 
+  /*
+   * Voiceover follows the scroll (owner request, 2026-11-19): while the video is on screen it
+   * talks, and scrolling past it mutes and pauses it. It also follows the nav Sound switch.
+   * Browsers only allow sound after the visitor's first tap, click or key press; until then the
+   * video loops silently and the first such press starts the voiceover from the beginning.
+   * After one full listen it loops silently until the visitor scrolls away and comes back.
+   */
+  let loaded = false;
+  let armed = false;     // the intro is over; the voiceover may start
+  let inView = false;
+  let heard = false;     // played to the end during this visit to the hero
+  let userMuted = false; // pressed Mute; respected until the hero is scrolled away
+  let pending = false;   // wants to talk but the browser has not allowed sound yet
+
+  const load = () => {
+    if (loaded) return;
+    loaded = true;
+    video.preload = "auto";
+    video.load();
+  };
   const label = () => {
     const on = !video.muted && !video.paused;
     sfx.duck(on); // keep effects quiet while the intro is talking
     sound.textContent = on ? "Mute" : "Play with sound";
     sound.setAttribute("aria-pressed", String(on));
   };
-  sound.addEventListener("click", () => {
-    if (!video.muted && !video.paused) {
-      video.muted = true; video.loop = true;
-      if (reduced()) video.pause();
-    } else {
-      video.muted = false; video.loop = false; video.currentTime = 0;
-      video.play().catch(() => {});
-    }
+  const silentLoop = () => {
+    video.muted = true; video.loop = true;
+    if (!reduced()) video.play().catch(() => {});
     label();
+  };
+  const talk = (fromStart) => {
+    load();
+    pending = false;
+    if (fromStart) video.currentTime = 0;
+    video.muted = false; video.loop = false;
+    const p = video.play();
+    label();
+    p?.catch(() => { pending = true; silentLoop(); }); // no sound allowed yet: wait for a press
+  };
+  const update = () => {
+    if (!armed || !inView) return;
+    const want = soundEnabled() && !userMuted && !heard;
+    if (want && (video.muted || video.paused)) talk(false);
+    else if (!want && !video.muted) silentLoop();
+  };
+
+  // Captions are drawn below the video, outside its feathered edge, so they stay readable.
+  const cc = document.querySelector(".tx-cc");
+  video.textTracks.addEventListener?.("addtrack", (e) => {
+    const track = e.track;
+    track.mode = "hidden";
+    track.addEventListener("cuechange", () => {
+      cc.textContent = [...(track.activeCues || [])].map((c) => c.text).join(" ");
+    });
+  });
+
+  sound.addEventListener("click", () => {
+    if (!video.muted && !video.paused) { userMuted = true; silentLoop(); }
+    else { userMuted = false; heard = false; talk(true); }
   });
   // After a full listen with sound, fall back to the silent loop.
-  video.addEventListener("ended", () => {
-    video.muted = true; video.loop = true; label();
-    if (!reduced()) video.play().catch(() => {});
-  });
+  video.addEventListener("ended", () => { heard = true; silentLoop(); });
   video.addEventListener("play", label);
   video.addEventListener("pause", label);
+  onSoundState(update); // nav Sound switch on/off, and audio becoming available
+
+  // The first press anywhere (other than the sound controls themselves) starts the voiceover.
+  const onPress = (e) => {
+    if (!pending || !inView || !armed || !soundEnabled() || userMuted) return;
+    if (e.target.closest?.(".tx-sound, .nav-sound")) return;
+    talk(true);
+  };
+  for (const type of ["pointerup", "touchend", "keydown", "click"]) {
+    window.addEventListener(type, onPress, { capture: true, passive: true });
+  }
+
+  new IntersectionObserver(([entry]) => {
+    const now = entry.isIntersecting && entry.intersectionRatio >= 0.4;
+    if (now === inView) return;
+    inView = now;
+    if (inView) {
+      if (heard) { heard = false; video.currentTime = 0; }
+      if (armed) update();
+      else silentLoop();
+    } else {
+      // Scrolled out: voiceover off.
+      userMuted = false; pending = false;
+      video.muted = true; video.pause();
+      cc.textContent = "";
+      label();
+    }
+  }, { threshold: [0, 0.4, 0.7] }).observe(document.querySelector(".tx-frame"));
 
   // Load the video after the page is interactive so it never competes with first paint.
-  const begin = () => {
-    video.preload = "auto";
-    video.load();
-    if (!reduced()) video.play().catch(() => {});
-  };
+  const begin = () => { load(); if (!reduced() && inView) video.play().catch(() => {}); };
   if (document.readyState === "complete") setTimeout(begin, 300);
   else window.addEventListener("load", () => setTimeout(begin, 300), { once: true });
 
-  return { hasVideo, hasPortrait: Boolean(portrait) };
+  const armVoice = () => {
+    if (armed) return;
+    armed = true;
+    update();
+  };
+
+  return { hasVideo, hasPortrait: Boolean(portrait), armVoice };
 }

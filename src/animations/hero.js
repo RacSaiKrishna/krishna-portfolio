@@ -47,8 +47,11 @@ export default function hero({ reduceMotion, isMobile, intro, media }) {
       .fromTo(caret, { opacity: 1, x: () => -role.offsetWidth }, { x: 0, duration: steps * 0.025, ease: `steps(${steps})` }, 0.8)
       .to(caret, { opacity: 0, duration: 0.01, repeat: 3, yoyo: true, repeatDelay: 0.28 })
       .set(caret, { opacity: 0 })
-      // Video frame: clip-path wipe from the bottom, HUD brackets draw in, one scan pass.
-      .fromTo(".tx-frame", { clipPath: "inset(100% 0% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.8, ease: "power3.inOut" }, 0.35)
+      // HUD brackets draw in, one scan pass (planet frame only; hidden with a video).
+      // Video frame: with a video it fades up out of the background; the planet frame wipes in.
+      .add(media.hasVideo
+        ? gsap.fromTo(".tx-frame", { opacity: 0, scale: 1.06 }, { opacity: 1, scale: 1, duration: 1.4, ease: "power2.out" })
+        : gsap.fromTo(".tx-frame", { clipPath: "inset(100% 0% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.8, ease: "power3.inOut" }), 0.35)
       .from(".tx-corner", { scale: 0, duration: 0.35, stagger: 0.05, ease: "power2.out" }, 0.95)
       .from(".tx-hud", { opacity: 0, duration: 0.4, stagger: 0.08 }, 1)
       .fromTo(".tx-scan", { yPercent: -110 }, { yPercent: 480, duration: 1.1, ease: "power1.inOut" }, 1.05)
