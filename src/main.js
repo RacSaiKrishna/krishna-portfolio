@@ -8,6 +8,7 @@ import { SplitText } from "gsap/SplitText";
 import { setupMedia } from "./media.js";
 import { reduced } from "./motion.js";
 import { initSound, setSound, soundEnabled, sfx } from "./sound.js";
+import { setupContactForm } from "./contact-form.js";
 import global, { navSpy } from "./animations/global.js";
 import loader from "./animations/loader.js";
 import hero from "./animations/hero.js";
@@ -21,7 +22,7 @@ import contact from "./animations/contact.js";
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
 const media = setupMedia();
-setupCopyEmail();
+setupContactForm();
 initSound();
 setupSoundSwitch();
 
@@ -98,20 +99,5 @@ function setupSoundSwitch() {
     setSound(on);
     sync();
     if (on) setTimeout(() => sfx.select(), 30);
-  });
-}
-
-function setupCopyEmail() {
-  const btn = document.querySelector(".mail-copy");
-  const status = document.getElementById("copy-status");
-  const address = "support@atharvionics.ca";
-  let timer;
-  btn.addEventListener("click", async () => {
-    let ok = false;
-    try { await navigator.clipboard.writeText(address); ok = true; } catch (e) { /* insecure context or denied */ }
-    btn.textContent = ok ? "Copied ✓" : "Select the address";
-    status.textContent = ok ? "Email address copied to clipboard" : "Copy failed. Select the address to copy it.";
-    clearTimeout(timer);
-    timer = setTimeout(() => { btn.textContent = "Copy email"; status.textContent = ""; }, 2200);
   });
 }

@@ -365,6 +365,48 @@
   overflow-wrap: anywhere;
 }
 .mail-line { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: linear-gradient(90deg, var(--ion), var(--plasma)); transform-origin: 0 50%; }
+/* ---------- Contact form dialog ---------- */
+html:has(.cf[open]) { overflow: hidden; }
+.cf {
+  width: min(640px, calc(100vw - 2 * var(--gutter))); max-height: calc(100dvh - 32px); margin: auto; padding: 0;
+  border: 0; background: transparent; color: var(--ink); overflow: auto; overscroll-behavior: contain;
+}
+.cf::backdrop { background: rgba(5, 6, 13, .78); backdrop-filter: blur(6px); }
+.cf-panel {
+  border: 1px solid var(--line-strong); background: linear-gradient(180deg, rgba(17, 23, 49, .97), rgba(12, 16, 32, .97));
+  box-shadow: 0 0 60px rgba(95, 227, 255, .12); padding: 20px;
+}
+@media (min-width: 768px) { .cf-panel { padding: 32px; } }
+.cf-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.cf-close {
+  width: 44px; height: 44px; border: 1px solid var(--line-strong); background: none; color: var(--ink);
+  font-size: 24px; line-height: 1; cursor: pointer;
+}
+.cf-close:hover { border-color: var(--ion); color: var(--ion); }
+.cf-title { font-family: var(--f-display); font-weight: 700; font-size: clamp(24px, 4vw, 34px); line-height: 1.1; margin: 12px 0 24px; }
+.cf-form { display: grid; gap: 16px; }
+.cf-grid { display: grid; gap: 16px; }
+@media (min-width: 600px) { .cf-grid { grid-template-columns: 1fr 1fr; } }
+.cf-field { display: block; font-size: 14px; color: var(--ink); }
+.cf-opt { color: var(--dim); }
+.cf-field input, .cf-field textarea {
+  display: block; width: 100%; margin-top: 8px; padding: 11px 12px; font: inherit; font-size: 16px; color: var(--ink);
+  background: rgba(5, 6, 13, .6); border: 1px solid var(--line-strong); border-radius: 0; transition: border-color .2s;
+}
+.cf-field textarea { resize: vertical; min-height: 120px; }
+.cf-field input::placeholder, .cf-field textarea::placeholder { color: var(--dim); opacity: .7; }
+.cf-field input:focus-visible, .cf-field textarea:focus-visible { outline: 2px solid var(--ion); outline-offset: 0; border-color: var(--ion); }
+.cf-field [aria-invalid="true"] { border-color: var(--plasma); }
+.cf-hint { margin-top: -6px; font-size: 13px; color: var(--dim); }
+.cf-honey { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.cf-status { font-size: 14px; min-height: 1.4em; }
+.cf-status:empty { display: none; }
+.cf-status.is-error { color: var(--plasma); }
+.cf-status.is-ok { color: var(--ion); }
+.cf-status a { color: inherit; text-underline-offset: 4px; }
+.cf-submit { width: 100%; }
+.cf-submit:disabled { cursor: progress; opacity: .7; }
+
 .links { display: flex; gap: 24px; margin-top: 28px; }
 .links a { font-family: var(--f-mono); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); text-underline-offset: 6px; }
 .links a:hover { color: var(--ion); }

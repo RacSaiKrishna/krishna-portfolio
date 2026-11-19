@@ -8,6 +8,7 @@
  *    let go (engine braking), and on a long fast scroll it shifts up through the gears
  *    (a short dip in revs, then the climb again). About a second after scrolling stops the
  *    engine fades to silence, so it never idles in the background.
+ *  - ignite(): a scripted start-up roar played once when the page's audio first starts.
  *
  * All oscillators sit at exact frequency ratios (no detune), so there is no beating "vibration".
  */
@@ -58,6 +59,7 @@ export function createMotor(ctx, destination, noiseBuffer) {
   let input = 0, throttle = 0, rpm = IDLE, gear = 1, active = 0;
   let lastInput = 0, quietSince = 0, shiftUntil = 0, timer = null;
   let level = 1;           // 1 normally, lower while the intro video talks
+  let script = null, scriptStart = 0, scriptEnd = 0; // scripted throttle (start-up roar)
   const VOLUME = 0.064;    // engine loudness at full throttle, before the master bus (was 0.075, -15%)
 
   function apply(now) {
@@ -75,6 +77,10 @@ export function createMotor(ctx, destination, noiseBuffer) {
 
   function tick() {
     const now = performance.now();
+    if (script) {
+      if (now < scriptEnd) { input = Math.max(input, script(now - scriptStart)); lastInput = now; }
+      else { script = null; lastInput = now - 700; } // release: fade out sooner than after a scroll
+    }
     if (now - lastInput > 140) input *= 0.8;          // throttle closes when scroll events stop
     throttle += (input - throttle) * 0.35;
 
@@ -109,5 +115,14 @@ export function createMotor(ctx, destination, noiseBuffer) {
       if (!timer) timer = setInterval(tick, 30);
     },
     setLevel(l) { level = l; },
+    /**
+     * Start-up roar: one short rev (about a second, including the fade), played once.
+     */
+    ignite() {
+      script = () => 0.8; // stays below the gear-shift point, so it is one clean rev
+      scriptStart = performance.now();
+      scriptEnd = scriptStart + 550;
+      if (!timer) timer = setInterval(tick, 30);
+    },
   };
 }

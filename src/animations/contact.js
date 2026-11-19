@@ -3,6 +3,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import { q } from "./shared.js";
 import { sfx } from "../sound.js";
+import { reduced } from "../motion.js";
 
 /**
  * Closing: headline lines rise from behind masks, the starfield fires one warp
@@ -42,4 +43,12 @@ export default function contact({ reduceMotion, stars }) {
   });
 
   ScrollTrigger.create({ trigger: section, start: "top 65%", once: true, onEnter: () => { stars.burst(); sfx.warp(); } });
+}
+
+/** Contact dialog opening: the panel wipes open from the centre line (clip-path + a small rise). */
+export function revealDialog(panel) {
+  if (reduced()) return;
+  gsap.fromTo(panel,
+    { clipPath: "inset(50% 0% 50% 0%)", y: 16, opacity: 0.4 },
+    { clipPath: "inset(0% 0% 0% 0%)", y: 0, opacity: 1, duration: 0.55, ease: "expo.out", clearProps: "clipPath,transform,opacity" });
 }

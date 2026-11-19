@@ -6,13 +6,15 @@
  * engagement) play sound with no interaction at all. Elsewhere the browser keeps audio
  * suspended until the visitor's first interaction (key press, mouse press, or the end of a
  * touch/swipe; mouse-wheel scrolling alone does not count), and it resumes right then.
- * Until audio is running every call is a silent no-op.
+ * Until audio is running every call is a silent no-op. The moment it runs, the engine
+ * (src/lib/motor.js) plays one start-up roar, then stays silent until you scroll.
  * The nav "Sound" switch mutes everything and is remembered in localStorage ("kr-sound").
  *
  *   select()  clicks on links and buttons       blip()   small UI blips (timeline stops, record cards)
  *   tick()    clicks anywhere else              ping(n)  orbit steps (pitch rises with n)
  *   scan()    a section number comes into view  whoosh() ID card flips
- *   warp()    the contact section's star burst  setVelocity(v)  scrolling = throttle: engine revs (src/lib/motor.js) + air
+ *   warp()    the contact section's star burst, and a message sent
+ *   open() / close() / focus() / key() / error()   the contact ("Transmission") window; open() roars  setVelocity(v)  scrolling = throttle: engine revs (src/lib/motor.js) + air
  *
  * UI sounds are sine/filtered-noise based and quiet on purpose; repeats are rate-limited so
  * fast scrolling never piles sounds on top of each other.
@@ -30,6 +32,7 @@ let air = null;     // { gain, filter } breeze that follows scroll speed
 let motor = null;   // engine that revs with scroll speed
 const lastPlayed = {}; // per-sound rate limit
 let ducked = false;
+let roared = false; // the start-up roar plays once per page load
 let enabled = (() => { try { return localStorage.getItem(KEY) !== "off"; } catch (e) { return true; } })();
 
 const ready = () => ctx && ctx.state === "running" && enabled;
@@ -63,8 +66,17 @@ function boot() {
     air = makeAir();
     motor = createMotor(ctx, master, noise);
     motor.setLevel(ducked ? 0.15 : 1);
+    ctx.addEventListener("statechange", roar);
   }
   if (ctx.state === "suspended") ctx.resume();
+  roar();
+}
+
+/** Engine start-up roar the first time audio is actually running (load, or the first press). */
+function roar() {
+  if (roared || !ready() || !motor) return;
+  roared = true;
+  motor.ignite();
 }
 
 function out(node, send = 0.5) {
@@ -139,6 +151,26 @@ export const sfx = {
     tone({ type: "sine", from: 110, to: 660, dur: 1.4, vol: 0.05, send: 0.7 });
     hiss({ from: 300, to: 3000, dur: 1.3, vol: 0.05, q: 0.7 });
   }, 2, "warp"),
+  // ---- Contact ("Transmission") window ----
+  // Channel opens: one engine roar (same rev as the page start-up) with a bright confirm note.
+  open: play(() => {
+    motor?.ignite();
+    tone({ type: "sine", from: 1318.5, dur: 0.3, vol: 0.035, at: 0.25, send: 0.6 });
+  }, 0.4, "open"),
+  // Channel closes: the sweep falls back down.
+  close: play(() => tone({ type: "sine", from: 880, to: 392, dur: 0.26, vol: 0.04, send: 0.45 }), 0.3, "close"),
+  // Typing: a tiny data tick per key, pitch varies a little so it doesn't drone.
+  key: play(() => tone({ type: "sine", from: 1500 + Math.random() * 300, dur: 0.035, vol: 0.018, send: 0.15 }), 0.045, "key"),
+  // Field focus: a short two-step chirp.
+  focus: play(() => {
+    tone({ type: "sine", from: 784, dur: 0.07, vol: 0.03, send: 0.3 });
+    tone({ type: "sine", from: 1046.5, dur: 0.09, vol: 0.03, at: 0.05, send: 0.4 });
+  }, 0.12, "focus"),
+  // Validation problem: two soft falling notes (gentle, not a buzzer).
+  error: play(() => {
+    tone({ type: "sine", from: 392, dur: 0.14, vol: 0.05, send: 0.3 });
+    tone({ type: "sine", from: 311, dur: 0.22, vol: 0.05, at: 0.12, send: 0.35 });
+  }, 0.4, "error"),
   /**
    * Scroll speed in px/s is the throttle: the engine revs, shifts gears on long fast
    * scrolls and fades out after you stop; the airy whoosh rides on top.
@@ -192,7 +224,7 @@ export function initSound() {
   // Build the audio engine only after the page has loaded and the browser is idle,
   // so it never competes with first paint.
   if (enabled) {
-    const later = () => (window.requestIdleCallback ? requestIdleCallback(tryAutostart, { timeout: 2500 }) : setTimeout(tryAutostart, 1200));
+    const later = () => (window.requestIdleCallback ? requestIdleCallback(tryAutostart, { timeout: 800 }) : setTimeout(tryAutostart, 300));
     document.readyState === "complete" ? later() : window.addEventListener("load", later, { once: true });
   }
 

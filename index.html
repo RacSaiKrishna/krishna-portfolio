@@ -55,7 +55,7 @@
       <li class="nav-opt"><a href="#work">Work</a></li>
       <li class="nav-opt"><a href="#experience">Experience</a></li>
       <li><button class="nav-sound" type="button" role="switch" aria-checked="true" hidden><span class="nav-sound-label">Sound</span><span class="switch" aria-hidden="true"><span class="switch-knob"></span></span><span class="nav-sound-state">On</span></button></li>
-      <li><a href="#contact" class="nav-cta">Contact</a></li>
+      <li><a href="#contact" class="nav-cta" data-contact-open aria-haspopup="dialog">Contact</a></li>
     </ul>
   </nav>
 </header>
@@ -461,15 +461,55 @@
     <p class="contact-note">Tell me which part of your week you'd hand to a machine. I'll come back with what it would take to automate it.</p>
     <div class="mail">
       <a class="mail-addr" href="mailto:support@atharvionics.ca">support@atharvionics.ca<span class="mail-line" aria-hidden="true"></span></a>
-      <button class="btn mail-copy magnetic" type="button">Copy email</button>
+      <a class="btn mail-copy magnetic" href="mailto:support@atharvionics.ca" data-contact-open aria-haspopup="dialog">Contact me</a>
     </div>
     <ul class="links">
       <li><a href="https://atharvionics.ca" target="_blank" rel="noopener">atharvionics.ca<span class="sr-only"> (opens in a new tab)</span></a></li>
       <li><a href="https://www.linkedin.com/in/sai-krishna-rachakonda" target="_blank" rel="noopener">LinkedIn<span class="sr-only"> (opens in a new tab)</span></a></li>
     </ul>
-    <p class="sr-only" aria-live="polite" id="copy-status"></p>
   </section>
 </main>
+
+<!-- Contact form: opened by the nav "Contact" link and the "Contact me" button. Without
+     JavaScript those links fall back to the section and a mailto: link. Submissions are
+     emailed to support@atharvionics.ca through FormSubmit (no back end of our own). -->
+<dialog class="cf" id="contact-dialog" aria-labelledby="cf-title" data-lenis-prevent>
+  <div class="cf-panel">
+    <div class="cf-head">
+      <p class="eyebrow">06 · Transmission</p>
+      <button class="cf-close" type="button" aria-label="Close contact form">×</button>
+    </div>
+    <h2 class="cf-title" id="cf-title">Send a message</h2>
+    <form class="cf-form" action="https://formsubmit.co/support@atharvionics.ca" method="POST" novalidate>
+      <div class="cf-grid">
+        <label class="cf-field" for="cf-name">Your name
+          <input id="cf-name" name="name" type="text" autocomplete="name" required>
+        </label>
+        <label class="cf-field" for="cf-company">Company <span class="cf-opt">(optional)</span>
+          <input id="cf-company" name="company" type="text" autocomplete="organization">
+        </label>
+        <label class="cf-field" for="cf-phone">Phone
+          <input id="cf-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel">
+        </label>
+        <label class="cf-field" for="cf-email">Email
+          <input id="cf-email" name="email" type="email" autocomplete="email">
+        </label>
+      </div>
+      <p class="cf-hint" id="cf-reach-hint">Phone or email is fine, whichever you prefer.</p>
+      <label class="cf-field" for="cf-message">Which part of your week would you hand to a machine?
+        <textarea id="cf-message" name="message" rows="5" required placeholder="For example: chasing approvals by email, re-keying data between systems, building the same report every Monday…"></textarea>
+      </label>
+      <div class="cf-honey" aria-hidden="true">
+        <label for="cf-website">Leave this empty<input id="cf-website" name="_honey" type="text" tabindex="-1" autocomplete="off"></label>
+      </div>
+      <input type="hidden" name="_subject" value="New message from krishna.atharvionics.ca">
+      <input type="hidden" name="_template" value="table">
+      <input type="hidden" name="_captcha" value="false">
+      <p class="cf-status" role="status" aria-live="polite"></p>
+      <button class="btn btn--solid cf-submit" type="submit">Send message</button>
+    </form>
+  </div>
+</dialog>
 
 <footer class="footer">
   <span>Krishna Rachakonda · Atharvionics</span>
