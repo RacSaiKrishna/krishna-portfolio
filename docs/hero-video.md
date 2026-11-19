@@ -1,6 +1,6 @@
 # Talking hero video
 
-The hero video has no frame: its edges fade into the dark page. While it is on screen the voiceover plays (after the visitor's first tap, click or key press, which browsers require); scrolling past it turns the voice off, and coming back turns it on again. The nav Sound switch and the **Mute** button silence it. Captions show below the video. A plain dark background in the recording blends best.
+The hero video has no frame: its edges fade into the dark page. While it is on screen the voiceover plays. Browsers need one click, tap or key press before any sound, so when they are holding sound back the start-up screen ends on an Enter button and that press starts the voice; scrolling past it turns the voice off, and coming back turns it on again. The nav Sound switch and the **Mute** button silence it. Captions show below the video. A plain dark background in the recording blends best.
 
 ## Recording
 - Length: 20–30 seconds.

@@ -243,6 +243,26 @@ function tryAutostart() {
 
 export function soundEnabled() { return enabled; }
 
+/**
+ * Resolves true if the browser lets audio play right now without a click (autoplay allowed),
+ * false if it is holding audio back until the visitor's first press. Starts the engine to find out.
+ */
+export function probeAudio(timeout = 450) {
+  if (!enabled) return Promise.resolve(true); // muted: nothing to unlock
+  try {
+    const policy = navigator.getAutoplayPolicy?.("audiocontext");
+    if (policy === "allowed") return Promise.resolve(true);
+    if (policy === "disallowed") return Promise.resolve(false);
+  } catch (e) { /* older browsers: try it */ }
+  boot();
+  if (!ctx) return Promise.resolve(true); // no Web Audio at all: nothing to wait for
+  if (ctx.state === "running") return Promise.resolve(true);
+  return new Promise((resolve) => {
+    const timer = setTimeout(() => resolve(ctx.state === "running"), timeout);
+    onSoundState(() => { if (ctx.state === "running") { clearTimeout(timer); resolve(true); } });
+  });
+}
+
 /** True once the browser actually lets audio play (iOS Safari: only after the first tap). */
 export function soundRunning() { return Boolean(ctx && ctx.state === "running"); }
 

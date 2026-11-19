@@ -175,6 +175,18 @@ body::before {
   letter-spacing: .02em; font-variant-numeric: tabular-nums; text-shadow: 0 0 30px rgba(95, 227, 255, .55);
 }
 .loader-label { font-family: var(--f-mono); font-size: 11px; letter-spacing: .4em; text-transform: uppercase; color: var(--dim); margin-top: 14px; }
+.is-return .loader-count { display: none; } /* later visits skip the count */
+.loader-gate { display: grid; justify-items: center; gap: 14px; margin-top: 26px; }
+.loader-gate [hidden] { display: none; }
+.is-gated .loader { pointer-events: auto; cursor: pointer; }
+.is-gated .loader-core { background: var(--void); padding: 28px 36px; } /* the door seam stops at the panel */
+.loader-enter { min-width: 180px; }
+.loader-mute {
+  background: none; border: 0; padding: 10px; min-height: 44px; cursor: pointer; color: var(--dim);
+  font-family: var(--f-mono); font-size: 11px; letter-spacing: .16em; text-transform: uppercase;
+  text-decoration: underline; text-underline-offset: 4px;
+}
+.loader-mute:hover { color: var(--ink); }
 
 /* ---------- Shared pieces ---------- */
 main { position: relative; z-index: 2; overflow-x: clip; }

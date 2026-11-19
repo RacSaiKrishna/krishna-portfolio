@@ -20,18 +20,18 @@
 <link rel="preload" href="/fonts/manrope.woff2" as="font" type="font/woff2" crossorigin>
 <script>
   /* Progressive enhancement switch. Runs before first paint.
-     The loader only shows with JS, once per session. */
+     The loader only shows with JS. First visit in a session: the 00-100 count. Every visit: if the
+     browser is holding sound back, it ends on an Enter button (that press is what lets the voiceover
+     and sounds play); otherwise the doors open straight away. */
   (function (d) {
     var h = d.documentElement;
     h.classList.remove("no-js");
     h.classList.add("js");
     try {
-      /* Motion is always on (owner decision, see src/motion.js), so the loader runs once per session. */
-      if (!sessionStorage.getItem("kr-boot")) {
-        h.classList.add("is-booting");
-        /* Failsafe: never trap the page behind the loader if the bundle fails. */
-        setTimeout(function () { h.classList.remove("is-booting"); }, 4500);
-      }
+      h.classList.add("is-booting");
+      if (sessionStorage.getItem("kr-boot")) h.classList.add("is-return");
+      /* Failsafe: never trap the page behind the loader if the bundle fails (the bundle cancels it). */
+      window.__krFailsafe = setTimeout(function () { h.classList.remove("is-booting", "is-return"); }, 4500);
     } catch (e) {}
   })(document);
 </script>
@@ -45,6 +45,10 @@
   <div class="loader-core">
     <p class="loader-count"><span class="loader-num">00</span></p>
     <p class="loader-label">Establishing link</p>
+    <div class="loader-gate">
+      <button class="btn btn--solid loader-enter" type="button" hidden>Enter</button>
+      <button class="loader-mute" type="button" hidden>Enter without sound</button>
+    </div>
   </div>
 </div>
 

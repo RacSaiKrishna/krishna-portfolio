@@ -182,6 +182,13 @@ export function setupMedia() {
   if (document.readyState === "complete") setTimeout(begin, 300);
   else window.addEventListener("load", () => setTimeout(begin, 300), { once: true });
 
+  // The loader's Enter button: this press is the permission browsers need, so the voiceover
+  // starts right now, inside the click (iOS Safari only allows sound from within the press itself).
+  document.addEventListener("kr:enter", () => {
+    armed = true;
+    if (inView && soundEnabled() && !userMuted) talk(true);
+  });
+
   const armVoice = () => {
     if (armed) return;
     armed = true;
