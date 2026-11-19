@@ -6,3 +6,6 @@ dist/
 .DS_Store
 *.log
 .env*
+
+# Firebase CLI cache
+.firebase/
