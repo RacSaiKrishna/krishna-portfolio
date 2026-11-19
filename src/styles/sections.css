@@ -263,6 +263,7 @@
   border-radius: 50%; background: var(--ion); box-shadow: 0 0 10px rgba(95, 227, 255, .6);
 }
 .leaf p { color: var(--dim); margin-top: 6px; max-width: 56ch; font-size: 15px; }
+.leaf em { color: var(--plasma); font-style: italic; }
 .leaf .t-meta { display: inline-block; margin-top: 10px; padding: 2px 8px; border: 1px solid rgba(95, 227, 255, .35); font-size: 10px; }
 
 /* Wide screens: root centred on top, a bus line, three branch columns hanging from it */
