@@ -9,6 +9,7 @@
  *    (a short dip in revs, then the climb again). About a second after scrolling stops the
  *    engine fades to silence, so it never idles in the background.
  *  - ignite(): a scripted start-up roar played once when the page's audio first starts.
+ *  - spool(p): revs follow the first-visit loading counter, ending in the ignite() roar.
  *
  * All oscillators sit at exact frequency ratios (no detune), so there is no beating "vibration".
  */
@@ -117,11 +118,18 @@ export function createMotor(ctx, destination, noiseBuffer) {
     setLevel(l) { level = l; },
     /**
      * Start-up roar: one short rev (about a second, including the fade), played once.
+     * peak stays below the gear-shift point, so it is one clean rev.
      */
-    ignite() {
-      script = () => 0.8; // stays below the gear-shift point, so it is one clean rev
+    ignite(peak = 0.8, hold = 550) {
+      script = () => peak;
       scriptStart = performance.now();
-      scriptEnd = scriptStart + 550;
+      scriptEnd = scriptStart + hold;
+      if (!timer) timer = setInterval(tick, 30);
+    },
+    /** Start-up spool: revs follow the loading counter (p 0..1), from idle up to a high rev. */
+    spool(p) {
+      input = 0.1 + 0.62 * p * p;
+      lastInput = performance.now();
       if (!timer) timer = setInterval(tick, 30);
     },
   };
