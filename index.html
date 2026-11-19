@@ -3,12 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+  // Firebase's built-in addresses (*.web.app, *.firebaseapp.com) forward to the real domain.
+  if (/\.(web\.app|firebaseapp\.com)$/.test(location.hostname)) location.replace("https://krishna.atharvionics.ca" + location.pathname + location.search + location.hash);
+</script>
+<link rel="canonical" href="https://krishna.atharvionics.ca/">
 <title>Krishna Rachakonda · AI &amp; Automation Engineer</title>
 <meta name="description" content="Krishna Rachakonda builds AI agents and automations that take the repetitive work off a team's plate. Ten years of AI, automation and system modernization in insurance and finance.">
 <meta name="theme-color" content="#05060d">
 <meta property="og:title" content="Krishna Rachakonda · AI &amp; Automation Engineer">
 <meta property="og:description" content="I build AI agents and automations that take the repetitive work off a team's plate.">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://krishna.atharvionics.ca/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/fonts/unbounded.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/manrope.woff2" as="font" type="font/woff2" crossorigin>
