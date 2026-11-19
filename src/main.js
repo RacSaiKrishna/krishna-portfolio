@@ -7,7 +7,7 @@ import { SplitText } from "gsap/SplitText";
 
 import { setupMedia } from "./media.js";
 import { reduced } from "./motion.js";
-import { initSound, setSound, soundEnabled, sfx } from "./sound.js";
+import { initSound, setSound, soundEnabled, soundRunning, soundJustUnlocked, onSoundState, sfx } from "./sound.js";
 import { setupContactForm } from "./contact-form.js";
 import global, { navSpy } from "./animations/global.js";
 import loader from "./animations/loader.js";
@@ -83,18 +83,32 @@ mm.add(
 // Webfonts change line lengths; re-measure once they are in.
 if (document.fonts) document.fonts.ready.then(() => ScrollTrigger.refresh());
 
-/** Nav on/off switch (role="switch"): mutes or unmutes the sound effects (remembered). */
+/**
+ * Nav on/off switch (role="switch"): mutes or unmutes the sound effects (remembered).
+ * While sound is on but the browser is still holding audio back (iOS Safari until the first
+ * tap), the switch reads "Tap"; pressing it then starts the engine instead of muting.
+ */
 function setupSoundSwitch() {
   const btn = document.querySelector(".nav-sound");
   const state = btn.querySelector(".nav-sound-state");
   const sync = () => {
     const on = soundEnabled();
+    const waiting = on && !soundRunning();
     btn.setAttribute("aria-checked", String(on));
-    state.textContent = on ? "On" : "Off";
+    btn.classList.toggle("is-waiting", waiting);
+    btn.setAttribute("aria-label", waiting ? "Sound: tap to start" : "Sound");
+    state.textContent = waiting ? "Tap" : on ? "On" : "Off";
   };
   btn.hidden = false;
   sync();
+  onSoundState(sync);
   btn.addEventListener("click", () => {
+    // This press is what unlocked audio: keep sound on (the start-up roar is playing).
+    if (soundEnabled() && (!soundRunning() || soundJustUnlocked())) {
+      setSound(true);
+      sync();
+      return;
+    }
     const on = !soundEnabled();
     setSound(on);
     sync();

@@ -154,6 +154,8 @@ body::before {
 .nav-sound[aria-checked="true"] .switch-knob { transform: translateX(16px); background: var(--void); }
 .nav-sound-state { display: inline-block; min-width: 3ch; text-align: left; color: var(--dim); }
 .nav-sound[aria-checked="true"] .nav-sound-state { color: var(--ion); }
+.nav-sound.is-waiting .switch-knob { animation: sound-wait 1.6s ease-in-out infinite; }
+@keyframes sound-wait { 50% { opacity: .35; } }
 @media (max-width: 420px) { .nav-sound-label { display: none; } }
 .nav-cta::after { display: none; }
 @media (max-width: 767px) { .nav-opt { display: none; } }

@@ -33,6 +33,9 @@ let motor = null;   // engine that revs with scroll speed
 const lastPlayed = {}; // per-sound rate limit
 let ducked = false;
 let roared = false; // the start-up roar plays once per page load
+let spooling = false; // the loader is revving the engine up with its counter
+let unlockedAt = 0;  // when audio first actually started running (performance.now())
+const watchers = new Set(); // notified when the audio engine starts or stops running
 let enabled = (() => { try { return localStorage.getItem(KEY) !== "off"; } catch (e) { return true; } })();
 
 const ready = () => ctx && ctx.state === "running" && enabled;
@@ -66,15 +69,21 @@ function boot() {
     air = makeAir();
     motor = createMotor(ctx, master, noise);
     motor.setLevel(ducked ? 0.15 : 1);
-    ctx.addEventListener("statechange", roar);
+    ctx.addEventListener("statechange", () => {
+      if (ctx.state === "running" && !unlockedAt) unlockedAt = performance.now();
+      roar();
+      watchers.forEach((fn) => fn());
+    });
   }
-  if (ctx.state === "suspended") ctx.resume();
+  // iOS also uses "interrupted" (calls, other apps, tab switches); resume from either.
+  if (ctx.state !== "running" && ctx.state !== "closed") ctx.resume().catch(() => {});
+  if (ctx.state === "running" && !unlockedAt) unlockedAt = performance.now();
   roar();
 }
 
 /** Engine start-up roar the first time audio is actually running (load, or the first press). */
 function roar() {
-  if (roared || !ready() || !motor) return;
+  if (roared || spooling || !ready() || !motor) return;
   roared = true;
   motor.ignite();
 }
@@ -189,6 +198,21 @@ export const sfx = {
     ramp(air.gain.gain, 0.0153 * k * hush, 0.12, 0, 0.4);
     ramp(air.filter.frequency, 600 + k * 600, 0.15, 600, 0.45);
   },
+  /**
+   * First-visit loader: the engine spools up with the 00 → 100 counter (p 0..1), and
+   * spoolDone() at 100 lets it roar as the doors open. Where audio is still blocked
+   * (iOS until the first tap) this is silent and the normal start-up roar plays later.
+   */
+  spool(p) {
+    if (!ready() || !motor) return;
+    roared = true; spooling = true;
+    motor.spool(p);
+  },
+  spoolDone() {
+    if (!spooling) return;
+    spooling = false;
+    motor.ignite(0.86, 650);
+  },
   /** Quieter effects while the intro video is talking. */
   duck(on) {
     ducked = on;
@@ -212,6 +236,15 @@ function tryAutostart() {
 
 export function soundEnabled() { return enabled; }
 
+/** True once the browser actually lets audio play (iOS Safari: only after the first tap). */
+export function soundRunning() { return Boolean(ctx && ctx.state === "running"); }
+
+/** True for a moment after audio first started, i.e. the press that is in progress unlocked it. */
+export function soundJustUnlocked() { return unlockedAt > 0 && performance.now() - unlockedAt < 1500; }
+
+/** Call fn whenever the audio engine starts or stops running. */
+export function onSoundState(fn) { watchers.add(fn); }
+
 export function setSound(on) {
   enabled = on;
   try { localStorage.setItem(KEY, on ? "on" : "off"); } catch (e) { /* private mode */ }
@@ -223,13 +256,19 @@ export function setSound(on) {
 export function initSound() {
   // Build the audio engine only after the page has loaded and the browser is idle,
   // so it never competes with first paint.
-  if (enabled) {
+  if (enabled && document.documentElement.classList.contains("is-booting")) {
+    tryAutostart(); // first visit: start now so the engine can spool up with the loading counter
+  } else if (enabled) {
     const later = () => (window.requestIdleCallback ? requestIdleCallback(tryAutostart, { timeout: 800 }) : setTimeout(tryAutostart, 300));
     document.readyState === "complete" ? later() : window.addEventListener("load", later, { once: true });
   }
 
   // Every interaction browsers accept as permission to play audio.
   const unlock = () => { if (enabled) boot(); };
+  // Coming back to the tab (iOS suspends audio in the background): resume if allowed.
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible" && ctx && enabled) ctx.resume().catch(() => {});
+  });
   for (const type of ["pointerdown", "pointerup", "mousedown", "touchend", "keydown"]) {
     window.addEventListener(type, unlock, { capture: true, passive: true });
   }

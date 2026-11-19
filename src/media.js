@@ -59,11 +59,10 @@ export function setupMedia() {
   const video = document.querySelector(".tx-video");
   const sound = document.querySelector(".tx-sound");
   const txTodo = document.querySelector(".tx-todo");
-  if (videoIsReal) txTodo?.classList.add("is-hidden");
-  else if (txTodo) {
-    txTodo.classList.add("tx-todo--compact");
-    txTodo.innerHTML = "TODO: placeholder video and voice. Record yours: <code>docs/hero-video.md</code>";
-  }
+  // Owner decision (2026-11-19): no visible TODO over the placeholder video either. It is the
+  // owner's photo with the synthetic placeholder voice until a real hero.mp4 is added
+  // (see docs/hero-video.md).
+  txTodo?.classList.add("is-hidden");
   document.querySelector(".tx-planet")?.classList.add("is-hidden");
   document.querySelector(".tx-frame")?.classList.add("has-video");
 

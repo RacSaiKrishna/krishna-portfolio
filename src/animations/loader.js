@@ -1,4 +1,5 @@
 import { gsap } from "gsap";
+import { sfx } from "../sound.js";
 
 let done = false;
 
@@ -31,7 +32,11 @@ export default function loader({ reduceMotion, lenis }) {
         v: 100,
         duration: 1.5,
         ease: "power2.inOut",
-        onUpdate: () => { num.textContent = String(Math.round(counter.v)).padStart(2, "0"); },
+        onUpdate: () => {
+          num.textContent = String(Math.round(counter.v)).padStart(2, "0");
+          sfx.spool(counter.v / 100); // engine revs climb with the count
+        },
+        onComplete: () => sfx.spoolDone(), // 100: the roar, as the doors open
       }, 0)
       .to(".loader-core", { scale: 1.7, opacity: 0, duration: 0.4, ease: "power2.in" })
       .add(resolve, "-=0.15")
