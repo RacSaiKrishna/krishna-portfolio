@@ -152,7 +152,7 @@ body::before {
 }
 .nav-sound[aria-checked="true"] .switch { background: var(--ion); border-color: var(--ion); box-shadow: 0 0 12px rgba(95, 227, 255, .45); }
 .nav-sound[aria-checked="true"] .switch-knob { transform: translateX(16px); background: var(--void); }
-.nav-sound-state { display: inline-block; min-width: 3ch; text-align: left; color: var(--dim); }
+.nav-sound-state { display: inline-block; width: 2.6em; text-align: left; white-space: nowrap; color: var(--dim); } /* fixed width: On/Off/Tap never shift the nav */
 .nav-sound[aria-checked="true"] .nav-sound-state { color: var(--ion); }
 .nav-sound.is-waiting .switch-knob { animation: sound-wait 1.6s ease-in-out infinite; }
 @keyframes sound-wait { 50% { opacity: .35; } }

@@ -8,7 +8,10 @@
  * touch/swipe; mouse-wheel scrolling alone does not count), and it resumes right then.
  * Until audio is running every call is a silent no-op. The moment it runs, the engine
  * (src/lib/motor.js) plays one start-up roar, then stays silent until you scroll.
- * The nav "Sound" switch mutes everything and is remembered in localStorage ("kr-sound").
+ * The nav "Sound" switch mutes everything for the current visit only: every page load starts
+ * with sound ON again (owner decision, 2026-11-19).
+ * On iPhone/iPad the audio session is set to "playback" so sound plays even with the ring/silent
+ * switch on silent (Safari 17+).
  *
  *   select()  clicks on links and buttons       blip()   small UI blips (timeline stops, record cards)
  *   tick()    clicks anywhere else              ping(n)  orbit steps (pitch rises with n)
@@ -36,7 +39,9 @@ let roared = false; // the start-up roar plays once per page load
 let spooling = false; // the loader is revving the engine up with its counter
 let unlockedAt = 0;  // when audio first actually started running (performance.now())
 const watchers = new Set(); // notified when the audio engine starts or stops running
-let enabled = (() => { try { return localStorage.getItem(KEY) !== "off"; } catch (e) { return true; } })();
+let enabled = true; // every visit starts with sound on
+// Older builds remembered a mute in localStorage; forget it so returning visitors hear sound again.
+try { localStorage.removeItem(KEY); } catch (e) { /* private mode */ }
 
 const ready = () => ctx && ctx.state === "running" && enabled;
 
@@ -44,6 +49,8 @@ function boot() {
   if (!ctx) {
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return;
+    // iOS: play through the ring/silent switch, like a video would.
+    try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch (e) { /* older Safari */ }
     ctx = new AC();
     const comp = ctx.createDynamicsCompressor();
     comp.threshold.value = -18; comp.ratio.value = 4;
@@ -247,7 +254,6 @@ export function onSoundState(fn) { watchers.add(fn); }
 
 export function setSound(on) {
   enabled = on;
-  try { localStorage.setItem(KEY, on ? "on" : "off"); } catch (e) { /* private mode */ }
   boot();
   if (master) master.gain.setTargetAtTime(on ? (ducked ? LEVEL * 0.35 : LEVEL) : 0, ctx.currentTime, 0.05);
 }

@@ -84,7 +84,7 @@ mm.add(
 if (document.fonts) document.fonts.ready.then(() => ScrollTrigger.refresh());
 
 /**
- * Nav on/off switch (role="switch"): mutes or unmutes the sound effects (remembered).
+ * Nav on/off switch (role="switch"): mutes or unmutes the sound effects for this visit.
  * While sound is on but the browser is still holding audio back (iOS Safari until the first
  * tap), the switch reads "Tap"; pressing it then starts the engine instead of muting.
  */
