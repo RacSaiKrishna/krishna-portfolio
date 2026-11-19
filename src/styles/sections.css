@@ -90,6 +90,13 @@
   background: none; border: 1px solid var(--line-strong); color: var(--ink); padding: 10px 12px; min-height: 44px; cursor: pointer;
 }
 .tx-sound:hover { border-color: var(--ion); color: var(--ion); }
+.tx-sound { position: relative; }
+.tx-sound.is-waiting { border-color: var(--ion); color: var(--ion); }
+.tx-sound.is-waiting::after {
+  content: ""; position: absolute; inset: -5px; border: 1px solid var(--ion); pointer-events: none;
+  animation: tx-call 1.8s ease-out infinite;
+}
+@keyframes tx-call { 0% { opacity: .9; transform: scale(.96); } 100% { opacity: 0; transform: scale(1.12); } }
 
 /* With a video: no tile. The frame loses its border and HUD, and its edges feather into the
    page background so the speaker appears out of the dark. */
@@ -130,12 +137,12 @@
    ========================================================= */
 .identity-pin { position: relative; }
 .id-stage { display: grid; justify-items: center; gap: 22px; }
-/* Landscape card, like a real ID (86 x 54). Height follows the content, never less than that ratio. */
+/* Landscape card, like a real ID. Height follows the content (front and back share the taller one). */
 .id-tilt, .id-flipper { width: 100%; container-type: inline-size; }
-.id-card { display: grid; gap: 24px; justify-content: center; grid-template-columns: minmax(0, 520px); }
+.id-card { display: grid; gap: 24px; justify-content: center; grid-template-columns: minmax(0, 600px); }
 
 .id-face {
-  position: relative; min-height: calc(100cqw * 54 / 86); padding: 30px 20px 14px; border-radius: 16px; overflow: hidden;
+  position: relative; padding: 30px 20px 14px; border-radius: 16px; overflow: hidden;
   display: flex; flex-direction: column;
 }
 .id-front {
@@ -148,6 +155,7 @@
 .id-name { grid-area: name; }
 .id-role { grid-area: role; }
 .id-fields { grid-area: fields; align-self: end; }
+.id-name { align-self: start; }
 .id-barcode { grid-area: bar; }
 .id-mrz { grid-area: mrz; }
 .id-front { background: var(--paper); color: var(--paper-ink); }
@@ -155,7 +163,7 @@
 .id-back { background: var(--hull); color: var(--ink); border: 1px solid var(--line-strong); }
 
 .id-stage.is-3d { perspective: 1600px; }
-.is-3d .id-tilt, .is-3d .id-flipper { width: min(520px, 100%); transform-style: preserve-3d; }
+.is-3d .id-tilt, .is-3d .id-flipper { width: min(600px, 100%); transform-style: preserve-3d; }
 .is-3d .id-card { display: grid; grid-template-columns: 1fr; gap: 0; transform-style: preserve-3d; }
 .is-3d .id-face { grid-area: 1 / 1; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
 .is-3d .id-back { transform: rotateY(180deg); }

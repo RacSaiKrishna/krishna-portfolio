@@ -27,7 +27,7 @@ initSound();
 setupSoundSwitch();
 
 // Below-the-fold section modules, in page order so pins are measured top to bottom.
-const sections = [identity, record, work, skills, path, contact];
+const sections = [identity, record, work, path, skills, contact];
 
 // Give the main thread back between sections so setup never becomes one long task.
 const yieldToMain = () =>

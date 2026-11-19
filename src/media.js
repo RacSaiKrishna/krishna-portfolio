@@ -106,6 +106,8 @@ export function setupMedia() {
     sfx.duck(on); // keep effects quiet while the intro is talking
     sound.textContent = on ? "Mute" : "Play with sound";
     sound.setAttribute("aria-pressed", String(on));
+    // Waiting for the browser to allow sound: make the button easy to spot.
+    sound.classList.toggle("is-waiting", pending && inView && !on);
   };
   const silentLoop = () => {
     video.muted = true; video.loop = true;
@@ -119,7 +121,7 @@ export function setupMedia() {
     video.muted = false; video.loop = false;
     const p = video.play();
     label();
-    p?.catch(() => { pending = true; silentLoop(); }); // no sound allowed yet: wait for a press
+    p?.catch(() => { pending = true; silentLoop(); label(); }); // no sound allowed yet: wait for a press
   };
   const update = () => {
     if (!armed || !inView) return;
