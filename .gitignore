@@ -1,0 +1,8 @@
+# Private source material: full resume + LinkedIn text (names employers). Stays local only.
+content/
+
+node_modules/
+dist/
+.DS_Store
+*.log
+.env*

@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Krishna Rachakonda · AI &amp; Automation Engineer</title>
+<meta name="description" content="Krishna Rachakonda builds AI agents and automations that take the repetitive work off a team's plate. Ten years of AI, automation and system modernization in insurance and finance.">
+<meta name="theme-color" content="#05060d">
+<meta property="og:title" content="Krishna Rachakonda · AI &amp; Automation Engineer">
+<meta property="og:description" content="I build AI agents and automations that take the repetitive work off a team's plate.">
+<meta property="og:type" content="website">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/fonts/unbounded.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/manrope.woff2" as="font" type="font/woff2" crossorigin>
+<script>
+  /* Progressive enhancement switch. Runs before first paint.
+     The loader only shows with JS, once per session. */
+  (function (d) {
+    var h = d.documentElement;
+    h.classList.remove("no-js");
+    h.classList.add("js");
+    try {
+      /* Motion is always on (owner decision, see src/motion.js), so the loader runs once per session. */
+      if (!sessionStorage.getItem("kr-boot")) {
+        h.classList.add("is-booting");
+        /* Failsafe: never trap the page behind the loader if the bundle fails. */
+        setTimeout(function () { h.classList.remove("is-booting"); }, 4500);
+      }
+    } catch (e) {}
+  })(document);
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="loader" aria-hidden="true">
+  <div class="loader-door loader-door--l"></div>
+  <div class="loader-door loader-door--r"></div>
+  <div class="loader-core">
+    <p class="loader-count"><span class="loader-num">00</span></p>
+    <p class="loader-label">Establishing link</p>
+  </div>
+</div>
+
+<canvas class="stars" aria-hidden="true"></canvas>
+<div class="progress" aria-hidden="true"></div>
+<div class="cursor" aria-hidden="true"></div>
+
+<header class="nav">
+  <a class="nav-mark" href="#top" aria-label="Krishna Rachakonda, back to top">KR<span aria-hidden="true">.</span></a>
+  <nav aria-label="Sections">
+    <ul>
+      <li class="nav-opt"><a href="#identity">ID</a></li>
+      <li class="nav-opt"><a href="#record">Record</a></li>
+      <li class="nav-opt"><a href="#work">Work</a></li>
+      <li class="nav-opt"><a href="#experience">Experience</a></li>
+      <li><button class="nav-sound" type="button" role="switch" aria-checked="true" hidden><span class="nav-sound-label">Sound</span><span class="switch" aria-hidden="true"><span class="switch-knob"></span></span><span class="nav-sound-state">On</span></button></li>
+      <li><a href="#contact" class="nav-cta">Contact</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="main">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="top" aria-labelledby="hero-name">
+    <p class="ghost" aria-hidden="true"><span class="ghost-layer ghost-stroke">PORTFOLIO</span><span class="ghost-layer ghost-fill">PORTFOLIO</span></p>
+
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">AI &amp; Automation · Kitchener, Ontario</p>
+        <p class="hello">Hello, I'm</p>
+        <h1 class="name" id="hero-name"><span class="name-line">Krishna</span> <span class="name-line name-line--outline">Rachakonda</span></h1>
+        <p class="role"><span class="role-text">AI &amp; Automation Engineer</span><span class="caret" aria-hidden="true"></span></p>
+        <p class="pitch">I build AI agents and automations that take the repetitive work off a team's plate. About ten years of AI, automation and system modernization in insurance and finance, now offered to growing businesses through Atharvionics.</p>
+        <div class="cta">
+          <a class="btn btn--solid magnetic" href="#record">See the record</a>
+          <a class="btn magnetic" href="#contact">Start a project</a>
+        </div>
+      </div>
+
+      <figure class="tx">
+        <div class="tx-frame">
+          <canvas class="tx-planet" aria-hidden="true"></canvas>
+          <video class="tx-video" playsinline muted loop preload="none" hidden aria-label="Video introduction from Krishna Rachakonda"></video>
+          <div class="tx-scan" aria-hidden="true"></div>
+          <span class="tx-corner tx-corner--tl" aria-hidden="true"></span>
+          <span class="tx-corner tx-corner--tr" aria-hidden="true"></span>
+          <span class="tx-corner tx-corner--bl" aria-hidden="true"></span>
+          <span class="tx-corner tx-corner--br" aria-hidden="true"></span>
+          <div class="tx-hud tx-hud--top" aria-hidden="true"><span><i class="tx-dot"></i>Live</span><span>Transmission 01</span></div>
+          <div class="tx-hud tx-hud--bottom" aria-hidden="true"><span>KR-01</span><span>43.45°N 80.49°W</span></div>
+          <p class="todo tx-todo">TODO: talking intro video. Drop <code>hero.mp4</code> into <code>src/media/</code> (see <code>docs/hero-video.md</code>).</p>
+        </div>
+        <figcaption class="tx-bar">
+          <span class="tx-caption">Incoming transmission</span>
+          <button class="tx-sound" type="button" hidden aria-pressed="false">Play with sound</button>
+        </figcaption>
+      </figure>
+    </div>
+
+    <dl class="strip">
+      <div><dt>Experience</dt><dd>~10 years</dd></div>
+      <div><dt>Saved per year</dt><dd>$272.5K</dd></div>
+      <div><dt>Sectors</dt><dd>Insurance · Banking · Environmental</dd></div>
+      <div><dt>Certified</dt><dd>AWS · Google</dd></div>
+    </dl>
+  </section>
+
+  <!-- ============ 01 IDENTITY ============ -->
+  <section class="block identity" id="identity" aria-labelledby="identity-title">
+    <div class="identity-pin">
+      <header class="head">
+        <p class="num" aria-hidden="true"><span class="num-stroke">01</span><span class="num-fill">01</span></p>
+        <h2 id="identity-title">Identity</h2>
+        <p class="head-note">Front: who I am. Back: the service record.</p>
+      </header>
+
+      <div class="id-stage">
+        <div class="id-tilt">
+          <div class="id-flipper">
+            <div class="id-card">
+              <article class="id-face id-front" aria-label="ID card, front">
+                <div class="id-slot" aria-hidden="true"></div>
+                <div class="id-top"><span>Atharvionics</span><span>Crew ID</span></div>
+                <div class="id-photo">
+                  <div class="id-monogram" aria-hidden="true">KR</div>
+                  <p class="todo id-todo">TODO: portrait. Drop <code>portrait.jpg</code> into <code>src/media/</code>.</p>
+                </div>
+                <p class="id-name">Krishna<br>Rachakonda</p>
+                <p class="id-role">AI &amp; Automation Engineer</p>
+                <dl class="id-fields">
+                  <div><dt>Base</dt><dd>Kitchener, ON</dd></div>
+                  <div><dt>Since</dt><dd>2015</dd></div>
+                  <div><dt>Class</dt><dd>AI Systems</dd></div>
+                  <div><dt>No.</dt><dd>KR-01</dd></div>
+                </dl>
+                <div class="id-barcode" aria-hidden="true"></div>
+                <p class="id-mrz" aria-hidden="true">KR&lt;RACHAKONDA&lt;&lt;KRISHNA&lt;&lt;AI&lt;AUTOMATION&lt;&lt;&lt;</p>
+              </article>
+
+              <article class="id-face id-back" aria-label="ID card, back">
+                <div class="id-stripe" aria-hidden="true"></div>
+                <p class="id-back-title">Service record</p>
+                <dl class="id-record">
+                  <div><dt>Experience</dt><dd>About 10 years across insurance, banking and environmental data</dd></div>
+                  <div><dt>Specialism</dt><dd>LLM orchestration, RAG, AWS Bedrock, intelligent workflow automation, API integration</dd></div>
+                  <div><dt>Certified</dt><dd>AWS Certified Developer, Associate · Google AI Essentials · Google Data Analytics</dd></div>
+                  <div><dt>In progress</dt><dd>AWS AI Practitioner · AWS Architect · PMP · TOGAF</dd></div>
+                  <div><dt>Education</dt><dd>M.Eng, University of Windsor · B.Tech, JNTU Kakinada</dd></div>
+                  <div><dt>Studio</dt><dd>Atharvionics</dd></div>
+                </dl>
+                <p class="id-return">If found, return to support@atharvionics.ca</p>
+              </article>
+            </div>
+          </div>
+        </div>
+        <button class="btn id-flip" type="button" hidden aria-pressed="false">Flip card</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 02 RECORD (sideways) ============ -->
+  <section class="block record" id="record" aria-labelledby="record-title">
+    <div class="record-pin">
+      <header class="head">
+        <p class="num" aria-hidden="true"><span class="num-stroke">02</span><span class="num-fill">02</span></p>
+        <h2 id="record-title">Mission record</h2>
+        <p class="head-note">Results from enterprise programmes. Employers stay anonymous.</p>
+      </header>
+
+      <div class="record-viewport" tabindex="0" role="region" aria-label="Achievements, scroll sideways">
+        <ol class="record-track">
+          <li class="feat">
+            <p class="feat-meta"><span>A-01</span><span>Insurance</span></p>
+            <p class="feat-big">$272.5K</p>
+            <h3>Saved every year</h3>
+            <p>Led the move of 17 regulatory and policy documents onto automated, rule-based generation, with decision logic that assembles each document from policy attributes and compliance conditions.</p>
+            <ul class="tags"><li>Rule engines</li><li>MuleSoft</li><li>OpenText</li><li>AWS</li></ul>
+          </li>
+          <li class="feat">
+            <p class="feat-meta"><span>A-02</span><span>Insurance</span></p>
+            <p class="feat-big">90%</p>
+            <h3>Of manual document work, gone</h3>
+            <p>Automated XML validation and structured exception handling kept output accurate. Splunk log analysis caught production failures before users did. Built so it is ready for AI validation next.</p>
+            <ul class="tags"><li>XML validation</li><li>REST APIs</li><li>Splunk</li></ul>
+          </li>
+          <li class="feat">
+            <p class="feat-meta"><span>A-03</span><span>Life insurance</span></p>
+            <p class="feat-big">~60%</p>
+            <h3>Less manual knowledge lookup</h3>
+            <p>A conversational AI assistant on AWS Bedrock that centralises product, process and system knowledge, with a governance model to keep its answers accurate in a regulated domain.</p>
+            <ul class="tags"><li>AWS Bedrock</li><li>RAG</li><li>AI governance</li></ul>
+          </li>
+          <li class="feat">
+            <p class="feat-meta"><span>A-04</span><span>Annuities</span></p>
+            <p class="feat-big feat-big--word">CICS → Unitrax</p>
+            <h3>Mainframe migration, data intact</h3>
+            <p>SQL validation scripts compared legacy and target policy data every cycle. Field-level mapping rules, daily integration monitoring and traced UAT kept a regulated platform running through the move.</p>
+            <ul class="tags"><li>SQL</li><li>Data mapping</li><li>Redwood RMJ</li></ul>
+          </li>
+          <li class="feat">
+            <p class="feat-meta"><span>A-05</span><span>Banking</span></p>
+            <p class="feat-big feat-big--word">Pilot → MVP</p>
+            <h3>Conversational digital banking</h3>
+            <p>Shaped the MVP for a digital banking pilot at a major bank: personal finance tools for budgeting and automated savings, with NLP-driven conversational assistance.</p>
+            <ul class="tags"><li>NLP assistant</li><li>Product discovery</li><li>KPIs</li></ul>
+          </li>
+          <li class="feat">
+            <p class="feat-meta"><span>A-06</span><span>Environmental</span></p>
+            <p class="feat-big feat-big--word">Geo × API</p>
+            <h3>Geospatial data, wired in</h3>
+            <p>Defined API-driven integration for ArcGIS and ESRI systems at an environmental data company, and led the data exchange design behind its reporting workflows.</p>
+            <ul class="tags"><li>ArcGIS / ESRI</li><li>API standards</li><li>Power BI</li></ul>
+          </li>
+          <li class="feat feat--end">
+            <p class="feat-meta"><span>A-07</span><span>Open</span></p>
+            <p class="feat-big feat-big--word">Your workflow</p>
+            <h3>Next on the record</h3>
+            <p>Which part of your week would you hand to a machine?</p>
+            <a class="btn btn--solid" href="#contact">Start a project</a>
+          </li>
+        </ol>
+      </div>
+      <div class="record-foot" aria-hidden="true">
+        <p class="record-count"><span class="record-current">01</span> / <span class="record-total">07</span></p>
+        <div class="record-rail"><span class="record-rail-fill"></span></div>
+        <p class="record-hint"><span class="record-hint-text">Scroll sideways</span> <span class="record-hint-arrow">→</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 03 WORK ============ -->
+  <section class="block work" id="work" aria-labelledby="work-title">
+    <header class="head">
+      <p class="num" aria-hidden="true"><span class="num-stroke">03</span><span class="num-fill">03</span></p>
+      <h2 id="work-title">Building now</h2>
+      <p class="head-note">Products and ventures I'm founding outside the day job.</p>
+    </header>
+
+    <ol class="ventures">
+      <li class="venture">
+        <span class="v-idx">01</span>
+        <div class="v-body">
+          <h3><a href="https://thearchionyx.com" target="_blank" rel="noopener">TheArchionyx<span class="v-arrow" aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a></h3>
+          <p>An AI-native architecture platform. Turns business requirements into architecture drafts, API contracts and data models through a five-stage LLM pipeline with guardrails and a validation layer.</p>
+        </div>
+        <span class="v-meta">Founder · Prototype</span>
+      </li>
+      <li class="venture">
+        <span class="v-idx">02</span>
+        <div class="v-body">
+          <h3><a href="https://bunqos.ca" target="_blank" rel="noopener">BunQo<span class="v-arrow" aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a></h3>
+          <p><em>Buy like a neighbourhood.</em> Neighbours pool what they plan to buy, the demand locks, and local dealers compete to win the group's business.</p>
+        </div>
+        <span class="v-meta">Founder · In build</span>
+      </li>
+      <li class="venture">
+        <span class="v-idx">03</span>
+        <div class="v-body">
+          <h3>Keep</h3>
+          <p>A household finance app for Canadian families: earn more, spend less, buy together, keep money local.</p>
+        </div>
+        <span class="v-meta">Founder · In build</span>
+      </li>
+      <li class="venture">
+        <span class="v-idx">04</span>
+        <div class="v-body">
+          <h3>AI phone receptionist</h3>
+          <p>One voice platform that answers calls for clinics, physio and legal offices and small businesses, at a price an independent practice can afford.</p>
+        </div>
+        <span class="v-meta">Founder · In design</span>
+      </li>
+      <li class="venture">
+        <span class="v-idx">05</span>
+        <div class="v-body">
+          <h3><a href="https://atharvionics.ca" target="_blank" rel="noopener">Atharvionics<span class="v-arrow" aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a></h3>
+          <p>AI automation services for small businesses.</p>
+        </div>
+        <span class="v-meta">Founder · Studio</span>
+      </li>
+      <li class="venture">
+        <span class="v-idx">06</span>
+        <div class="v-body">
+          <h3>Future of 2036</h3>
+          <p>A YouTube show on the businesses tomorrow's technology will create. Season one: the first factory in space.</p>
+        </div>
+        <span class="v-meta">Creator · Show</span>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ============ 04 SKILLS ============ -->
+  <section class="block skills" id="skills" aria-labelledby="skills-title">
+    <div class="skills-pin">
+      <header class="head">
+        <p class="num" aria-hidden="true"><span class="num-stroke">04</span><span class="num-fill">04</span></p>
+        <h2 id="skills-title">One core, five disciplines</h2>
+      </header>
+
+      <div class="skills-grid">
+        <div class="orbit" aria-hidden="true">
+          <div class="orbit-ring"></div>
+          <div class="orbit-ring orbit-ring--inner"></div>
+          <div class="orbit-spin">
+            <div class="orbit-node" style="--a:0deg"><i class="orbit-ray"></i><span class="orbit-label"><b>LLM systems</b><b class="orbit-lit">LLM systems</b></span></div>
+            <div class="orbit-node" style="--a:72deg"><i class="orbit-ray"></i><span class="orbit-label"><b>Automation</b><b class="orbit-lit">Automation</b></span></div>
+            <div class="orbit-node" style="--a:144deg"><i class="orbit-ray"></i><span class="orbit-label"><b>Integration</b><b class="orbit-lit">Integration</b></span></div>
+            <div class="orbit-node" style="--a:216deg"><i class="orbit-ray"></i><span class="orbit-label"><b>Data</b><b class="orbit-lit">Data</b></span></div>
+            <div class="orbit-node" style="--a:288deg"><i class="orbit-ray"></i><span class="orbit-label"><b>Governance</b><b class="orbit-lit">Governance</b></span></div>
+          </div>
+          <div class="orbit-core"><span>AI +<br>Automation</span></div>
+        </div>
+
+        <ol class="skill-list">
+          <li class="skill"><span class="skill-idx">01</span><div><h3>LLM systems</h3><p>LLM orchestration, structured prompting, contextual engineering and RAG, on AWS Bedrock and LLM APIs.</p></div></li>
+          <li class="skill"><span class="skill-idx">02</span><div><h3>Workflow automation</h3><p>Rule-based and AI-assisted workflows that take manual steps out of document generation, validation and hand-offs.</p></div></li>
+          <li class="skill"><span class="skill-idx">03</span><div><h3>Integration architecture</h3><p>REST APIs, MuleSoft and XML pipelines that connect legacy platforms to modern cloud services.</p></div></li>
+          <li class="skill"><span class="skill-idx">04</span><div><h3>Data and validation</h3><p>SQL validation, migration checks and dashboards in Power BI and Tableau that keep data honest.</p></div></li>
+          <li class="skill"><span class="skill-idx">05</span><div><h3>AI governance</h3><p>Pilot success criteria and evaluation on accuracy, latency, cost and reliability, with governance fit for regulated industries.</p></div></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 05 EXPERIENCE ============ -->
+  <section class="block path" id="experience" aria-labelledby="path-title">
+    <header class="head">
+      <p class="num" aria-hidden="true"><span class="num-stroke">05</span><span class="num-fill">05</span></p>
+      <h2 id="path-title">Experience</h2>
+      <p class="head-note">About ten years, newest first, one line each. Employers are described by sector.</p>
+    </header>
+
+    <div class="path-track">
+    <span class="path-line" aria-hidden="true"></span>
+    <ol class="stops">
+      <li class="stop stop--next">
+        <span class="stop-ring" aria-hidden="true"></span><span class="stop-dot" aria-hidden="true"></span>
+        <article class="stop-tile stop-tile--next">
+          <p class="stop-time">Next</p>
+          <h3>AWS AI Practitioner · AWS Architect · PMP · TOGAF</h3>
+          <p class="stop-sum">Certifications in progress.</p>
+        </article>
+      </li>
+      <li class="stop">
+        <span class="stop-dot" aria-hidden="true"></span>
+        <article class="stop-tile">
+          <p class="stop-time">2025 – Present</p>
+          <h3>Founder</h3>
+          <p class="stop-org"><a href="https://thearchionyx.com" target="_blank" rel="noopener">TheArchionyx<span class="sr-only"> (opens in a new tab)</span></a> · AI-native architecture platform</p>
+          <p class="stop-sum">Turns business requirements into architecture drafts, API contracts and data models through staged LLM orchestration.</p>
+          <ul class="tags"><li>LLM orchestration</li><li>Guardrails</li><li>Evaluation</li></ul>
+        </article>
+      </li>
+      <li class="stop">
+        <span class="stop-dot" aria-hidden="true"></span>
+        <article class="stop-tile">
+          <p class="stop-time">2025 – Present</p>
+          <h3>AI Solution Analyst</h3>
+          <p class="stop-org">Canadian insurer · Life Insurance division</p>
+          <p class="stop-sum">Built a conversational AI knowledge assistant on AWS Bedrock that cut manual knowledge lookup by ~60%.</p>
+          <ul class="tags"><li>AWS Bedrock</li><li>RAG</li><li>AI governance</li></ul>
+        </article>
+      </li>
+      <li class="stop">
+        <span class="stop-dot" aria-hidden="true"></span>
+        <article class="stop-tile">
+          <p class="stop-time">2024 – 2025</p>
+          <h3>Project Lead</h3>
+          <p class="stop-org">Canadian insurer · Life annuity system</p>
+          <p class="stop-sum">Automated 17 regulatory and policy documents, saving ~$272.5K a year and 90% of manual processing.</p>
+          <ul class="tags"><li>MuleSoft</li><li>OpenText</li><li>Splunk</li></ul>
+        </article>
+      </li>
+      <li class="stop">
+        <span class="stop-dot" aria-hidden="true"></span>
+        <article class="stop-tile">
+          <p class="stop-time">2023 – 2024</p>
+          <h3>Solution Analyst II</h3>
+          <p class="stop-org">Canadian insurer · Annuity platform</p>
+          <p class="stop-sum">Moved annuity administration from a CICS mainframe to Unitrax, with SQL validation keeping regulated data intact.</p>
+          <ul class="tags"><li>SQL</li><li>CICS → Unitrax</li><li>UAT</li></ul>
+        </article>
+      </li>
+      <li class="stop">
+        <span class="stop-dot" aria-hidden="true"></span>
+        <article class="stop-tile">
+          <p class="stop-time">2021 – 2023</p>
+          <h3>Lead Business Systems Analyst</h3>
+          <p class="stop-org">Environmental data company · Toronto</p>
+          <p class="stop-sum">Designed API-driven ArcGIS / ESRI integration and the data exchange behind environmental reporting.</p>
+          <ul class="tags"><li>ArcGIS / ESRI</li><li>REST APIs</li><li>Power BI</li></ul>
+        </article>
+      </li>
+      <li class="stop">
+        <span class="stop-dot" aria-hidden="true"></span>
+        <article class="stop-tile">
+          <p class="stop-time">2019 – 2021</p>
+          <h3>Business Systems Analyst · Project Lead</h3>
+          <p class="stop-org">Major bank · Toronto</p>
+          <p class="stop-sum">Shaped the MVP for a digital banking pilot: budgeting, automated savings and NLP-driven assistance.</p>
+          <ul class="tags"><li>NLP assistant</li><li>PFM</li><li>Agile</li></ul>
+        </article>
+      </li>
+      <li class="stop">
+        <span class="stop-dot" aria-hidden="true"></span>
+        <article class="stop-tile">
+          <p class="stop-time">2017 – 2018</p>
+          <h3>Intermediate Business Analyst</h3>
+          <p class="stop-org">Life insurer · Toronto</p>
+          <p class="stop-sum">Gap analysis, BRDs and data-migration validation for a legacy billing modernisation.</p>
+          <ul class="tags"><li>BRD</li><li>Gap analysis</li><li>UAT</li></ul>
+        </article>
+      </li>
+      <li class="stop">
+        <span class="stop-dot" aria-hidden="true"></span>
+        <article class="stop-tile">
+          <p class="stop-time">2015 – 2016</p>
+          <h3>Associate Software Engineer</h3>
+          <p class="stop-org">Software services firm · India</p>
+          <p class="stop-sum">Built a utility billing and customer information system for a utility across three provinces of Kyrgyzstan.</p>
+          <ul class="tags"><li>Billing</li><li>CIS</li><li>Client workshops</li></ul>
+        </article>
+      </li>
+    </ol>
+    </div>
+
+    <div class="creds">
+      <div class="cred">
+        <h3>Education</h3>
+        <ul>
+          <li><b>Master of Engineering, Industrial Engineering</b><span>University of Windsor · 2016 – 2017</span></li>
+          <li><b>Bachelor of Technology, Mechanical Engineering</b><span>Jawaharlal Nehru Technological University, Kakinada · 2011 – 2015</span></li>
+        </ul>
+      </div>
+      <div class="cred">
+        <h3>Certifications</h3>
+        <ul>
+          <li><b>AWS Certified Developer, Associate</b></li>
+          <li><b>Google AI Essentials</b></li>
+          <li><b>Google Data Analytics</b></li>
+          <li><b>Business Analysis Foundations</b></li>
+          <li><span>In progress: AWS AI Practitioner · AWS Architect · PMP · TOGAF</span></li>
+        </ul>
+      </div>
+      <div class="cred">
+        <h3>Toolkit</h3>
+        <ul class="tags">
+          <li>Python</li><li>Java</li><li>Angular</li><li>React</li><li>Node.js</li><li>REST / JSON</li><li>MuleSoft</li><li>Postman</li>
+          <li>SQL · MySQL · Oracle</li><li>AWS · Bedrock · EC2</li><li>GCP</li><li>Azure</li><li>Splunk</li><li>Power BI</li><li>Tableau</li>
+          <li>Salesforce</li><li>JIRA · Confluence</li><li>Selenium</li><li>LeanIX</li><li>Claude</li><li>ChatGPT</li><li>Copilot</li><li>Gemini</li><li>Power Automate</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 06 CONTACT ============ -->
+  <section class="block contact" id="contact" aria-labelledby="contact-title">
+    <p class="eyebrow">06 · Contact</p>
+    <h2 class="contact-title" id="contact-title">Let's build something that <em>runs itself.</em></h2>
+    <p class="contact-note">Tell me which part of your week you'd hand to a machine. I'll come back with what it would take to automate it.</p>
+    <div class="mail">
+      <a class="mail-addr" href="mailto:support@atharvionics.ca">support@atharvionics.ca<span class="mail-line" aria-hidden="true"></span></a>
+      <button class="btn mail-copy magnetic" type="button">Copy email</button>
+    </div>
+    <ul class="links">
+      <li><a href="https://atharvionics.ca" target="_blank" rel="noopener">atharvionics.ca<span class="sr-only"> (opens in a new tab)</span></a></li>
+      <li><a href="https://www.linkedin.com/in/sai-krishna-rachakonda" target="_blank" rel="noopener">LinkedIn<span class="sr-only"> (opens in a new tab)</span></a></li>
+    </ul>
+    <p class="sr-only" aria-live="polite" id="copy-status"></p>
+  </section>
+</main>
+
+<footer class="footer">
+  <span>Krishna Rachakonda · Atharvionics</span>
+  <span>Kitchener, Ontario · 2026</span>
+</footer>
+
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
