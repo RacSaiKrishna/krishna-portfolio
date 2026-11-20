@@ -8,7 +8,7 @@
  * touch/swipe; mouse-wheel scrolling alone does not count), and it resumes right then.
  * Until audio is running every call is a silent no-op. The moment it runs, the engine
  * (src/lib/motor.js) plays one start-up roar, then stays silent until you scroll.
- * The nav "Sound" switch mutes everything for the current visit only: every page load starts
+ * The nav speaker icon mutes everything for the current visit only: every page load starts
  * with sound ON again (owner decision, 2026-11-19).
  * On iPhone/iPad the audio session is set to "playback" so sound plays even with the ring/silent
  * switch on silent (Safari 17+).

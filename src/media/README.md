@@ -14,5 +14,5 @@ Colour is fine: the site renders both in black and white.
 
 ## Placeholders
 `hero.placeholder.mp4`, `hero.placeholder.vtt`, `hero-poster.placeholder.jpg` and `portrait.placeholder.jpg` are stand-ins
-(silhouette + synthetic voice). A real file with the plain name always wins over its placeholder, and while a placeholder
+(photo + the owner's cloned voice). A real file with the plain name always wins over its placeholder, and while a placeholder
 is in use the page shows a small TODO. Delete the placeholder files once your real ones are in.

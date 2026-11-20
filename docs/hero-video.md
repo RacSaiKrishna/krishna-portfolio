@@ -1,6 +1,6 @@
 # Talking hero video
 
-The hero video has no frame: its edges fade into the dark page. While it is on screen the voiceover plays. Browsers need one click, tap or key press before any sound, so when they are holding sound back the start-up screen ends on an Enter button and that press starts the voice; scrolling past it turns the voice off, and coming back turns it on again. The nav Sound switch and the **Mute** button silence it. Captions show below the video. A plain dark background in the recording blends best.
+The hero video has no frame: its edges fade into the dark page. While it is on screen the voiceover plays. Browsers need one click, tap or key press before any sound, so when they are holding sound back the start-up screen ends on an Enter button and that press starts the voice; scrolling past it turns the voice off, and coming back turns it on again. The nav speaker icon and the **Mute** button silence it. Captions show below the video. A plain dark background in the recording blends best.
 
 ## Recording
 - Length: 20–30 seconds.
@@ -16,7 +16,7 @@ The hero video has no frame: its edges fade into the dark page. While it is on s
 > Now, through Atharvionics, I help businesses in Waterloo Region catch missed calls and leads, get quotes and invoices out on time, and connect the software they already use.
 > So tell me: which part of your week would you hand to a machine?
 
-About 30 seconds. The placeholder video speaks this same script in a synthetic voice (macOS `say -v Aman`).
+About 40 seconds. The current hero video speaks this exact script in the owner's own voice, cloned on this Mac from a voice memo with the open-source F5-TTS model (`f5-tts-mlx`); nothing was uploaded. To change the wording: cut a clean 10-second piece of the memo as the reference, generate each sentence with `python -m f5_tts_mlx.generate --ref-audio ref.wav --ref-text "<what the piece says>" --text "<new sentence>"`, join them with half-second pauses, and re-time `src/media/hero.placeholder.vtt` (two lines at most per caption, so the hero stays steady).
 
 (No employer is named, which matches the site's privacy rule.)
 

@@ -60,8 +60,8 @@ export function setupMedia() {
   const sound = document.querySelector(".tx-sound");
   const txTodo = document.querySelector(".tx-todo");
   // Owner decision (2026-11-19): no visible TODO over the placeholder video either. It is the
-  // owner's photo with the synthetic placeholder voice until a real hero.mp4 is added
-  // (see docs/hero-video.md).
+  // owner's photo with the owner's cloned voice reading the pitch, until a real hero.mp4 is
+  // added (see docs/hero-video.md).
   txTodo?.classList.add("is-hidden");
   document.querySelector(".tx-planet")?.classList.add("is-hidden");
   document.querySelector(".tx-frame")?.classList.add("has-video");
@@ -83,7 +83,7 @@ export function setupMedia() {
 
   /*
    * Voiceover follows the scroll (owner request, 2026-11-19): while the video is on screen it
-   * talks, and scrolling past it mutes and pauses it. It also follows the nav Sound switch.
+   * talks, and scrolling past it mutes and pauses it. It also follows the nav speaker icon.
    * Browsers only allow sound after the visitor's first tap, click or key press; until then the
    * video loops silently and the first such press starts the voiceover from the beginning.
    * After one full listen it loops silently until the visitor scrolls away and comes back.
@@ -148,7 +148,7 @@ export function setupMedia() {
   video.addEventListener("ended", () => { heard = true; silentLoop(); });
   video.addEventListener("play", label);
   video.addEventListener("pause", label);
-  onSoundState(update); // nav Sound switch on/off, and audio becoming available
+  onSoundState(update); // nav speaker icon on/off, and audio becoming available
 
   // The first press anywhere (other than the sound controls themselves) starts the voiceover.
   const onPress = (e) => {

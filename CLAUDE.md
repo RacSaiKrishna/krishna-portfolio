@@ -19,7 +19,7 @@ Personal portfolio site for Krishna Rachakonda, AI & Automation Engineer. Dark s
 - Every animation lives in `src/animations/<section>.js` and is registered through one `gsap.matchMedia()` setup with three contexts: desktop, mobile, reduced-motion.
 - With JavaScript off, every section must be fully readable. Start states are set by GSAP, never in CSS.
 - Owner decision (2026-11-18): motion is always on, even with OS reduced motion. Keep the reduced-motion context in code; `MOTION_ALWAYS_ON` in `src/motion.js` re-enables it.
-- Sound: sci-fi UI sounds are synthesised in `src/sound.js` (Web Audio, no files), are ON at every visit and start on page load where the browser allows autoplay; otherwise the start-up screen ends on an Enter button (`src/animations/loader.js`), whose press unlocks sound and starts the hero voiceover. The voiceover plays while the hero video is on screen and stops when scrolled past (`src/media.js`), stay quiet and rate-limited, and the nav "Sound" switch mutes them. Scroll speed drives a synthesised engine (`src/lib/motor.js`).
+- Sound: sci-fi UI sounds are synthesised in `src/sound.js` (Web Audio, no files), are ON at every visit and start on page load where the browser allows autoplay; otherwise the start-up screen ends on an Enter button (`src/animations/loader.js`), whose press unlocks sound and starts the hero voiceover. The voiceover plays while the hero video is on screen and stops when scrolled past (`src/media.js`), stay quiet and rate-limited, and the nav speaker icon mutes them. Scroll speed drives a synthesised engine (`src/lib/motor.js`).
 - Mobile first. Test at 390px, 768px, 1440px.
 - Restraint: one signature effect per section, two accent colours, no scattered decorative arrows or floating icons.
 

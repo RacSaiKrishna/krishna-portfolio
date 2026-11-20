@@ -85,20 +85,19 @@ mm.add(
 if (document.fonts) document.fonts.ready.then(() => ScrollTrigger.refresh());
 
 /**
- * Nav on/off switch (role="switch"): mutes or unmutes the sound effects for this visit.
+ * Nav speaker icon (role="switch"): mutes or unmutes the sound effects for this visit.
  * While sound is on but the browser is still holding audio back (iOS Safari until the first
- * tap), the switch reads "Tap"; pressing it then starts the engine instead of muting.
+ * tap), the sound waves pulse; pressing it then starts the engine instead of muting.
  */
 function setupSoundSwitch() {
   const btn = document.querySelector(".nav-sound");
-  const state = btn.querySelector(".nav-sound-state");
   const sync = () => {
     const on = soundEnabled();
     const waiting = on && !soundRunning();
     btn.setAttribute("aria-checked", String(on));
     btn.classList.toggle("is-waiting", waiting);
     btn.setAttribute("aria-label", waiting ? "Sound: tap to start" : "Sound");
-    state.textContent = waiting ? "Tap" : on ? "On" : "Off";
+    btn.title = waiting ? "Tap to start sound" : on ? "Mute sound" : "Turn sound on";
   };
   btn.hidden = false;
   sync();
