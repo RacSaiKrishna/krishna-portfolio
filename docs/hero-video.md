@@ -9,12 +9,14 @@ The hero video has no frame: its edges fade into the dark page. While it is on s
 - Light: one soft key light from the side gives the best monochrome contrast.
 - Audio: a lapel or phone mic close to you; a quiet room.
 
-## Script (draft from your resume, edit freely)
-> Hi, I'm Krishna.
+## Script: elevator pitch (from your resume and atharvionics.ca, edit freely)
+> Hi, I'm Krishna Rachakonda, founder of Atharvionics.
 > I build AI agents and automations that take the repetitive work off a team's plate.
-> For about ten years I've worked inside insurance and finance: automating seventeen regulatory documents to save over two hundred and seventy thousand dollars a year, and building a conversational AI assistant on AWS Bedrock.
-> Now, through Atharvionics, I bring that to growing businesses.
-> Tell me which part of your week you'd hand to a machine.
+> For about ten years, I've done that inside insurance and finance. Automating seventeen regulatory documents saved over two hundred and seventy-two thousand dollars a year.
+> Now, through Atharvionics, I help businesses in Waterloo Region catch missed calls and leads, get quotes and invoices out on time, and connect the software they already use.
+> So tell me: which part of your week would you hand to a machine?
+
+About 30 seconds. The placeholder video speaks this same script in a synthetic voice (macOS `say -v Aman`).
 
 (No employer is named, which matches the site's privacy rule.)
 

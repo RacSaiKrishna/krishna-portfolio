@@ -236,7 +236,11 @@
   scrollbar-color: var(--line-strong) transparent; padding-bottom: 16px;
 }
 .record-viewport:focus-visible { outline-offset: -2px; }
-.record-track { display: flex; gap: 16px; width: max-content; padding: 0 var(--gutter); }
+/* Track starts on the same left edge as the content column (and the hero's stat tiles). */
+.record-track {
+  display: flex; gap: 16px; width: max-content;
+  padding: 0 max(var(--gutter), calc((100% - var(--max)) / 2 + var(--gutter))); /* % = the scroller's width */
+}
 .feat {
   scroll-snap-align: center; flex: 0 0 auto; width: min(84vw, 460px); min-height: 440px;
   display: flex; flex-direction: column; gap: 14px; padding: 28px 26px;

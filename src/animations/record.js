@@ -44,11 +44,15 @@ export default function record({ isDesktop, isMobile, reduceMotion }) {
 
     const distance = () => Math.max(0, track.scrollWidth - viewport.clientWidth);
     const centres = () => cards.map((c) => c.offsetLeft + c.offsetWidth / 2);
+    // The "focus" glides from the first card's centre (start) to the last card's centre (end),
+    // so A-01 is the lit card when the record begins and each card gets its turn in order.
     let snapPoints = [];
+    let progress = 0;
+    const focusAt = (p) => { const c = centres(); return c[0] + (c[c.length - 1] - c[0]) * p; };
     const computeSnaps = () => {
-      const d = distance() || 1;
-      const half = viewport.clientWidth / 2;
-      snapPoints = centres().map((c) => gsap.utils.clamp(0, 1, (c - half) / d));
+      const c = centres();
+      const span = (c[c.length - 1] - c[0]) || 1;
+      snapPoints = c.map((x) => gsap.utils.clamp(0, 1, (x - c[0]) / span));
     };
 
     // Dim a card's contents, not the card itself, so its solid background stays opaque.
@@ -58,11 +62,10 @@ export default function record({ isDesktop, isMobile, reduceMotion }) {
     });
     const scale = cards.map((c) => gsap.quickSetter(c, "scale"));
     const update = () => {
-      const x = gsap.getProperty(track, "x");
-      const half = viewport.clientWidth / 2;
+      const focus = focusAt(progress);
       let best = 0, bestD = Infinity;
       cards.forEach((c, i) => {
-        const d = Math.abs(c.offsetLeft + c.offsetWidth / 2 + x - half);
+        const d = Math.abs(c.offsetLeft + c.offsetWidth / 2 - focus);
         const t = Math.min(1, d / (c.offsetWidth + 16));
         opacity[i](1 - 0.45 * t);
         scale[i](1 - 0.04 * t);
@@ -82,7 +85,7 @@ export default function record({ isDesktop, isMobile, reduceMotion }) {
         scrub: 0.35,
         invalidateOnRefresh: true,
         onRefresh: () => { computeSnaps(); update(); },
-        onUpdate: (self) => { update(); setProgress(self.progress); },
+        onUpdate: (self) => { progress = self.progress; update(); setProgress(self.progress); },
         snap: {
           snapTo: (v) => gsap.utils.snap(snapPoints, v),
           duration: { min: 0.15, max: 0.4 },

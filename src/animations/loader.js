@@ -1,4 +1,5 @@
 import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { sfx, probeAudio, soundEnabled, setSound } from "../sound.js";
 
 let done = false;
@@ -34,6 +35,8 @@ export default function loader({ reduceMotion, lenis }) {
       root.classList.remove("is-booting", "is-return", "is-gated");
       try { sessionStorage.setItem("kr-boot", "1"); } catch (e) { /* private mode */ }
       lenis?.start();
+      // The loader hid the scrollbar while the page was measured; re-measure pins and widths now.
+      ScrollTrigger.refresh();
     };
     const open = () =>
       gsap.timeline({ onComplete: finish, onInterrupt: () => { finish(); resolve(); } })
@@ -62,8 +65,17 @@ export default function loader({ reduceMotion, lenis }) {
         root.classList.remove("is-gated");
         open();
       };
-      // The whole screen is the button; the small link enters muted.
+      // The whole screen is the button; the small link enters muted. Any key works too
+      // (Tab still moves between the two buttons; Enter/Space on a button is its own click).
       el.addEventListener("click", (e) => enter(!e.target.closest(".loader-mute")));
+      const onKey = (e) => {
+        if (entered) { window.removeEventListener("keydown", onKey, true); return; }
+        if (["Tab", "Shift", "Control", "Alt", "Meta"].includes(e.key)) return;
+        if (e.target.closest?.(".loader-enter, .loader-mute") && (e.key === "Enter" || e.key === " ")) return;
+        e.preventDefault();
+        enter(true);
+      };
+      window.addEventListener("keydown", onKey, true);
     };
 
     const next = () =>
