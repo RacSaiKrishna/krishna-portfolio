@@ -6,6 +6,7 @@ Until a file exists, the page shows a visible TODO in its place and requests not
 | File | Where it appears | Notes |
 |------|------------------|-------|
 | `hero.mp4` (optional `hero.webm`) | Hero "transmission" frame | Talking intro, 4:5 crop, see `docs/hero-video.md` |
+| `hero-voice.m4a` (or `.mp3`) | Voiceover for the hero video | Played through Web Audio in sync with the (silent) video; same timeline as the captions |
 | `hero.vtt` | Captions on the hero video | Shown on the muted loop too |
 | `hero-poster.jpg` | First frame before the video plays | 1080×1350 |
 | `portrait.jpg` | ID card photo | Square crop, plain background, at least 800px |
@@ -13,6 +14,6 @@ Until a file exists, the page shows a visible TODO in its place and requests not
 Colour is fine: the site renders both in black and white.
 
 ## Placeholders
-`hero.placeholder.mp4`, `hero.placeholder.vtt`, `hero-poster.placeholder.jpg` and `portrait.placeholder.jpg` are stand-ins
+`hero.placeholder.mp4`, `hero-voice.placeholder.m4a`, `hero.placeholder.vtt`, `hero-poster.placeholder.jpg` and `portrait.placeholder.jpg` are stand-ins
 (photo + the owner's cloned voice). A real file with the plain name always wins over its placeholder, and while a placeholder
 is in use the page shows a small TODO. Delete the placeholder files once your real ones are in.

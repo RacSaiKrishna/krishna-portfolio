@@ -33,6 +33,7 @@ let fx = null;      // shared space echo
 let noise = null;   // white-noise buffer
 let air = null;     // { gain, filter } breeze that follows scroll speed
 let motor = null;   // engine that revs with scroll speed
+let voiceBus = null; // the hero voiceover (src/media.js): own level, no effects, follows the switch
 const lastPlayed = {}; // per-sound rate limit
 let ducked = false;
 let roared = false; // the start-up roar plays once per page load
@@ -244,6 +245,24 @@ function tryAutostart() {
 export function soundEnabled() { return enabled; }
 
 /**
+ * The hero voiceover plays through this audio engine, not through the video element. Browsers
+ * (Safari above all) police a video's own sound separately from Web Audio: it can refuse to
+ * play a paused video with sound again without a fresh click, while the engine keeps running.
+ * Routing the voice here means: whenever the engine can be heard, the voice can be too.
+ * Returns the AudioContext and the voice output, or null without Web Audio.
+ */
+export function voiceOutput() {
+  boot();
+  if (!ctx) return null;
+  if (!voiceBus) {
+    voiceBus = ctx.createGain();
+    voiceBus.gain.value = enabled ? 1 : 0;
+    voiceBus.connect(ctx.destination);
+  }
+  return { ctx, out: voiceBus };
+}
+
+/**
  * Resolves true if the browser lets audio play right now without a click (autoplay allowed),
  * false if it is holding audio back until the visitor's first press. Starts the engine to find out.
  */
@@ -276,6 +295,7 @@ export function setSound(on) {
   enabled = on;
   boot();
   if (master) master.gain.setTargetAtTime(on ? (ducked ? LEVEL * 0.35 : LEVEL) : 0, ctx.currentTime, 0.05);
+  if (voiceBus) voiceBus.gain.setTargetAtTime(on ? 1 : 0, ctx.currentTime, 0.05);
   watchers.forEach((fn) => fn()); // e.g. the hero voiceover follows the switch
 }
 

@@ -21,11 +21,12 @@ About 40 seconds. The current hero video speaks this exact script in the owner's
 (No employer is named, which matches the site's privacy rule.)
 
 ## Export
-Keep the file under ~6 MB so it loads fast on mobile:
+The site plays the picture and the voice separately: a silent video (muted video may autoplay everywhere) and the voice as its own file, played through the site's audio engine in sync from the first frame. Safari refuses to restart a paused video's own sound without a fresh click, so a voice inside the video went silent after scrolling away; through the audio engine it plays whenever the engine can be heard. Keep the video under ~6 MB so it loads fast on mobile:
 
 ```sh
-ffmpeg -i raw.mov -vf "crop=ih*4/5:ih,scale=1080:1350" -c:v libx264 -crf 27 -preset slow \
-  -c:a aac -b:a 96k -movflags +faststart src/media/hero.mp4
+ffmpeg -i raw.mov -vf "crop=ih*4/5:ih,scale=1080:1350" -an -c:v libx264 -crf 27 -preset slow \
+  -movflags +faststart src/media/hero.mp4
+ffmpeg -i raw.mov -vn -ac 1 -c:a aac -b:a 96k src/media/hero-voice.m4a
 ffmpeg -i src/media/hero.mp4 -frames:v 1 -q:v 3 src/media/hero-poster.jpg
 ```
 

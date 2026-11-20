@@ -1,6 +1,7 @@
 /**
  * Optional media. Drop files into src/media/ and they are picked up at build time:
  *   hero.mp4 (and/or hero.webm)  talking intro video
+ *   hero-voice.m4a (or .mp3)     its voiceover, played through Web Audio in sync with the video
  *   hero.vtt                     captions for it
  *   hero-poster.jpg|png|webp     first frame shown before it plays
  *   portrait.jpg|png|webp        photo for the ID card
@@ -12,12 +13,14 @@
 const real = {
   video: import.meta.glob("./media/hero.{mp4,webm}", { eager: true, query: "?url", import: "default" }),
   vtt: import.meta.glob("./media/hero.vtt", { eager: true, query: "?url", import: "default" }),
+  voice: import.meta.glob("./media/hero-voice.{m4a,mp3}", { eager: true, query: "?url", import: "default" }),
   poster: import.meta.glob("./media/hero-poster.{jpg,jpeg,png,webp}", { eager: true, query: "?url", import: "default" }),
   portrait: import.meta.glob("./media/portrait.{jpg,jpeg,png,webp}", { eager: true, query: "?url", import: "default" }),
 };
 const stand = {
   video: import.meta.glob("./media/hero.placeholder.{mp4,webm}", { eager: true, query: "?url", import: "default" }),
   vtt: import.meta.glob("./media/hero.placeholder.vtt", { eager: true, query: "?url", import: "default" }),
+  voice: import.meta.glob("./media/hero-voice.placeholder.{m4a,mp3}", { eager: true, query: "?url", import: "default" }),
   poster: import.meta.glob("./media/hero-poster.placeholder.{jpg,jpeg,png,webp}", { eager: true, query: "?url", import: "default" }),
   portrait: import.meta.glob("./media/portrait.placeholder.{jpg,jpeg,png,webp}", { eager: true, query: "?url", import: "default" }),
 };
@@ -26,7 +29,7 @@ const first = (obj) => Object.values(obj)[0];
 const byExt = (obj, ext) => Object.entries(obj).find(([k]) => k.endsWith(ext))?.[1];
 
 import { reduced } from "./motion.js";
-import { sfx, soundEnabled, onSoundState } from "./sound.js";
+import { sfx, soundEnabled, soundRunning, onSoundState, voiceOutput } from "./sound.js";
 
 export function setupMedia() {
   // The video, its captions and poster travel together: real set if a real video exists.
@@ -35,6 +38,7 @@ export function setupMedia() {
   const mp4 = byExt(vset.video, ".mp4");
   const webm = byExt(vset.video, ".webm");
   const vtt = first(vset.vtt);
+  const voiceUrl = first(vset.voice);
   const poster = first(vset.poster);
   const portraitIsReal = has(real.portrait);
   const portrait = first(portraitIsReal ? real.portrait : stand.portrait);
@@ -66,7 +70,11 @@ export function setupMedia() {
   document.querySelector(".tx-planet")?.classList.add("is-hidden");
   document.querySelector(".tx-frame")?.classList.add("has-video");
 
-  if (poster) video.poster = poster;
+  if (poster) {
+    video.poster = poster;
+    // Safari can drop a paused video's frame after it scrolls away; the photo stays behind it.
+    video.style.background = `#05060d url("${poster}") center / cover no-repeat`;
+  }
   for (const [src, type] of [[webm, "video/webm"], [mp4, "video/mp4"]]) {
     if (!src) continue;
     const s = document.createElement("source");
@@ -82,19 +90,28 @@ export function setupMedia() {
   sound.hidden = false;
 
   /*
-   * Voiceover follows the scroll (owner request, 2026-11-19): while the video is on screen it
-   * talks, and scrolling past it mutes and pauses it. It also follows the nav speaker icon.
-   * Browsers only allow sound after the visitor's first tap, click or key press; until then the
-   * video loops silently and the first such press starts the voiceover from the beginning.
-   * After one full listen it loops silently until the visitor scrolls away and comes back.
+   * The video itself is always muted: muted video may autoplay everywhere, so the picture never
+   * waits for permission. The voice is a separate file played through the site's audio engine
+   * (src/sound.js), started at the same moment as the video from its first frame. Browsers
+   * police a video's own sound separately and Safari would refuse to restart it after scrolling
+   * away; the engine has no such rule, so whenever the engine can be heard, so can the voice.
+   *
+   * Behaviour (owner requests, 2026-11-19/20): while the video is on screen it talks; scrolling
+   * past stops it; coming back starts it again from the beginning. After one full listen it loops
+   * silently until the visitor scrolls away and back. The nav speaker icon and the Mute button
+   * silence it. Where audio is not allowed yet (phones until the first swipe or tap, desktop
+   * until Enter), it starts the moment audio starts.
    */
   let loaded = false;
   let armed = false;     // the intro is over; the voiceover may start
   let inView = false;
   let heard = false;     // played to the end during this visit to the hero
   let userMuted = false; // pressed Mute; respected until the hero is scrolled away
-  let pending = false;   // wants to talk but the browser has not allowed sound yet
-  let primed = false;    // the video has been started inside a press, so it may talk later
+  let buffer = null;     // decoded voice
+  let fetching = null;
+  let voice = null;      // { src, t0 } while talking
+  let syncTimer = 0;
+  const cc = document.querySelector(".tx-cc");
 
   const load = () => {
     if (loaded) return;
@@ -102,116 +119,119 @@ export function setupMedia() {
     video.preload = "auto";
     video.load();
   };
+  const talking = () => Boolean(voice);
   const label = () => {
-    const on = !video.muted && !video.paused;
+    const on = talking();
     sfx.duck(on); // keep effects quiet while the intro is talking
     sound.textContent = on ? "Mute" : "Play with sound";
     sound.setAttribute("aria-pressed", String(on));
-    // Waiting for the browser to allow sound: make the button easy to spot.
-    sound.classList.toggle("is-waiting", pending && inView && !on);
+    // Wants to talk but the browser has not allowed sound yet: make the button easy to spot.
+    sound.classList.toggle("is-waiting", inView && armed && !on && !userMuted && !heard && soundEnabled() && !soundRunning());
   };
-  const silentLoop = () => {
+  const playMuted = () => {
     video.muted = true; video.loop = true;
     if (!reduced()) video.play().catch(() => {});
-    label();
-  };
-  const talk = (fromStart) => {
-    load();
-    pending = false;
-    if (fromStart) video.currentTime = 0;
-    video.muted = false; video.loop = false;
-    const p = video.play();
-    label();
-    p?.catch(() => { pending = true; silentLoop(); label(); }); // no sound allowed yet: wait for a press
-  };
-  const update = () => {
-    if (!armed || !inView) return;
-    const want = soundEnabled() && !userMuted && !heard;
-    // From the silent loop, the voice always starts at the beginning, never mid-sentence.
-    if (want && (video.muted || video.paused)) talk(video.muted);
-    else if (!want && !video.muted) silentLoop();
   };
 
-  // Captions are drawn below the video, outside its feathered edge, so they stay readable.
-  const cc = document.querySelector(".tx-cc");
+  // Fetch and decode the voice once (about 0.5 MB), after the page has loaded.
+  const getVoice = () => {
+    if (buffer || fetching || !voiceUrl) return fetching;
+    const io = voiceOutput();
+    if (!io) return null;
+    fetching = fetch(voiceUrl)
+      .then((r) => r.arrayBuffer())
+      .then((data) => new Promise((ok, fail) => io.ctx.decodeAudioData(data, ok, fail))) // callback form: older Safari
+      .then((b) => { buffer = b; update(); })
+      .catch(() => { fetching = null; });
+    return fetching;
+  };
+
+  // Captions follow the voice's own clock while it talks, the video's while it loops silently.
+  const cues = () => [...(video.textTracks[0]?.cues || [])];
+  const caption = (t) => {
+    const cue = cues().find((c) => t >= c.startTime && t < c.endTime);
+    cc.textContent = cue ? cue.text : "";
+  };
+
+  const stopVoice = () => {
+    if (!voice) return;
+    voice.src.onended = null;
+    try { voice.src.stop(); } catch (e) { /* already stopped */ }
+    voice = null;
+    clearInterval(syncTimer);
+    label();
+  };
+  const talk = () => {
+    const io = voiceOutput();
+    if (!io || !buffer || !soundRunning()) { label(); return; }
+    stopVoice();
+    load();
+    video.muted = true; video.loop = true;
+    video.currentTime = 0;
+    if (!reduced()) video.play().catch(() => {});
+    const src = io.ctx.createBufferSource();
+    src.buffer = buffer;
+    src.connect(io.out);
+    src.start();
+    voice = { src, t0: io.ctx.currentTime };
+    src.onended = () => { voice = null; clearInterval(syncTimer); heard = true; cc.textContent = ""; label(); };
+    // Keep picture and captions on the voice's clock (the tab may pause, the video may buffer).
+    syncTimer = setInterval(() => {
+      if (!voice) return;
+      const t = io.ctx.currentTime - voice.t0;
+      caption(t);
+      if (Math.abs(video.currentTime - t) > 0.35 && t < (video.duration || Infinity)) video.currentTime = t;
+    }, 120);
+    label();
+  };
+  function update() {
+    if (!inView) return;
+    const want = armed && soundEnabled() && !userMuted && !heard;
+    if (want && !talking()) { if (buffer) talk(); else getVoice(); }
+    else if (!want && talking()) stopVoice();
+    if (!talking()) playMuted();
+    label();
+  }
+
   video.textTracks.addEventListener?.("addtrack", (e) => {
     const track = e.track;
     track.mode = "hidden";
     track.addEventListener("cuechange", () => {
+      if (talking()) return; // the voice clock drives captions while it talks
       cc.textContent = [...(track.activeCues || [])].map((c) => c.text).join(" ");
     });
   });
 
   sound.addEventListener("click", () => {
-    primed = true;
-    if (!video.muted && !video.paused) { userMuted = true; silentLoop(); }
-    else { userMuted = false; heard = false; talk(true); }
+    if (talking()) { userMuted = true; stopVoice(); playMuted(); }
+    else { userMuted = false; heard = false; update(); } // this click also starts audio (src/sound.js)
   });
-  // After a full listen with sound, fall back to the silent loop.
-  video.addEventListener("ended", () => { heard = true; silentLoop(); });
-  video.addEventListener("play", label);
-  video.addEventListener("pause", label);
-  onSoundState(update); // nav speaker icon on/off, and audio becoming available
-
-  /*
-   * iPhone only lets a video play with sound if it was started inside a press. On phones the video
-   * is often below the fold at the first tap, so prime it then: start it with sound and stop it at
-   * once (the clip opens on 0.3 s of silence, so nothing is heard). Scrolling to it later may then
-   * start the voiceover without another tap.
-   */
-  const prime = () => {
-    if (primed || !soundEnabled()) return;
-    primed = true;
-    load();
-    video.muted = false;
-    video.play()?.then(() => {
-      if (inView && armed && !userMuted && !heard) { pending = false; label(); return; } // keep talking
-      video.muted = true;
-      if (inView) silentLoop();
-      else { video.pause(); video.currentTime = 0; label(); }
-    }).catch(() => { primed = false; video.muted = true; label(); });
-  };
-
-  // The first press anywhere (other than the sound controls themselves) starts the voiceover if
-  // the video is on screen, and otherwise primes it for when it scrolls into view.
-  const onPress = (e) => {
-    if (e.target.closest?.(".tx-sound, .nav-sound")) return;
-    if (pending && inView && armed && soundEnabled() && !userMuted) { primed = true; talk(true); return; }
-    prime();
-  };
-  for (const type of ["pointerup", "touchend", "keydown", "click"]) {
-    window.addEventListener(type, onPress, { capture: true, passive: true });
-  }
+  onSoundState(update); // speaker icon on/off, and audio starting (first swipe, tap, Enter or autoplay)
 
   new IntersectionObserver(([entry]) => {
     const now = entry.isIntersecting && entry.intersectionRatio >= 0.4;
     if (now === inView) return;
     inView = now;
     if (inView) {
-      if (heard) { heard = false; video.currentTime = 0; }
-      if (armed) update();
-      else silentLoop();
+      heard = false; // coming back: from the beginning again
+      update();
     } else {
-      // Scrolled out: voiceover off.
-      userMuted = false; pending = false;
-      video.muted = true; video.pause();
+      // Scrolled out: voice off, picture paused.
+      userMuted = false;
+      stopVoice();
+      video.pause();
       cc.textContent = "";
       label();
     }
   }, { threshold: [0, 0.4, 0.7] }).observe(document.querySelector(".tx-frame"));
 
-  // Load the video after the page is interactive so it never competes with first paint.
-  const begin = () => { load(); if (!reduced() && inView) video.play().catch(() => {}); };
+  // Load the video and voice after the page is interactive so they never compete with first paint.
+  const begin = () => { load(); getVoice(); if (!reduced() && inView) video.play().catch(() => {}); };
   if (document.readyState === "complete") setTimeout(begin, 300);
   else window.addEventListener("load", () => setTimeout(begin, 300), { once: true });
 
-  // The loader's Enter button: this press is the permission browsers need, so the voiceover
-  // starts right now, inside the click (iOS Safari only allows sound from within the press itself).
-  document.addEventListener("kr:enter", () => {
-    armed = true;
-    if (inView && soundEnabled() && !userMuted) { primed = true; talk(true); }
-    else prime();
-  });
+  // The loader's Enter button: the press has just started audio (src/sound.js).
+  document.addEventListener("kr:enter", () => { armed = true; update(); });
 
   const armVoice = () => {
     if (armed) return;
