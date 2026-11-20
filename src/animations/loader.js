@@ -11,6 +11,7 @@ let done = false;
  *    key press), an Enter button appears. That press is the permission browsers require, so the
  *    voiceover and sounds start the moment the doors open. "Enter without sound" mutes instead.
  *  - Where sound is already allowed, or the visitor has muted, the doors simply open.
+ *  - On phones and tablets the doors always open; sound starts on the first tap instead.
  * With JS off the loader never shows.
  */
 export default function loader({ reduceMotion, lenis }) {
@@ -78,8 +79,12 @@ export default function loader({ reduceMotion, lenis }) {
       window.addEventListener("keydown", onKey, true);
     };
 
+    // Phones and tablets (owner decision, 2026-11-20): never show Enter, open straight into the
+    // site. Their browsers still hold sound until the first touch, so the effects and the hero
+    // voiceover start on the first tap anywhere (src/sound.js, src/media.js).
+    const touch = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
     const next = () =>
-      probeAudio().then((allowed) => (allowed || !soundEnabled() ? open() : gate()));
+      touch ? open() : probeAudio().then((allowed) => (allowed || !soundEnabled() ? open() : gate()));
 
     if (firstVisit && !reduceMotion) {
       const num = el.querySelector(".loader-num");

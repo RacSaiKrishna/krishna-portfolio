@@ -7,13 +7,15 @@
  *  - Behaviour: revs climb with some inertia while you scroll, fall back more slowly when you
  *    let go (engine braking), and on a long fast scroll it shifts up through the gears
  *    (a short dip in revs, then the climb again). About a second after scrolling stops the
- *    engine fades to silence, so it never idles in the background.
+ *    engine settles to a soft idle (owner request, 2026-11-20) and keeps ticking over until
+ *    the next scroll. The idle is quiet (about a sixth of full throttle) so it never drones.
  *  - ignite(): a scripted start-up roar played once when the page's audio first starts.
  *  - spool(p): revs follow the first-visit loading counter, ending in the ignite() roar.
  *
  * All oscillators sit at exact frequency ratios (no detune), so there is no beating "vibration".
  */
 const IDLE = 0.12;                  // idle revs, 0..1
+const IDLE_LEVEL = 0.45;            // engine loudness while idling, relative to driving
 const GEAR_RATE = [0, 0.11, 0.075, 0.055, 0.042, 0.034]; // how fast revs climb in each gear
 const firingHz = (rpm) => 28 + rpm * 190; // ~840 to ~6500 rpm on a 4-cylinder
 
@@ -60,6 +62,7 @@ export function createMotor(ctx, destination, noiseBuffer) {
   let input = 0, throttle = 0, rpm = IDLE, gear = 1, active = 0;
   let lastInput = 0, quietSince = 0, shiftUntil = 0, timer = null;
   let level = 1;           // 1 normally, lower while the intro video talks
+  let started = false;     // once the engine has run, it idles instead of falling silent
   let script = null, scriptStart = 0, scriptEnd = 0; // scripted throttle (start-up roar)
   const VOLUME = 0.064;    // engine loudness at full throttle, before the master bus (was 0.075, -15%)
 
@@ -98,11 +101,13 @@ export function createMotor(ctx, destination, noiseBuffer) {
     } else quietSince = 0;
 
     const running = now - lastInput < 900;
-    active += ((running ? 1 : 0) - active) * (running ? 0.25 : 0.06);
+    const target = running ? 1 : started ? IDLE_LEVEL : 0;
+    active += (target - active) * (running ? 0.25 : 0.06);
     apply(now);
 
-    if (!running && active < 0.003) {                  // fully faded: park the engine
-      active = 0; rpm = IDLE; gear = 1; throttle = 0; input = 0;
+    // Settled at idle: the oscillators keep sounding at the idle level; stop updating them.
+    if (!running && Math.abs(active - target) < 0.003 && Math.abs(rpm - IDLE) < 0.002) {
+      active = target; rpm = IDLE; gear = 1; throttle = 0; input = 0;
       apply(now);
       clearInterval(timer); timer = null;
     }
@@ -113,9 +118,10 @@ export function createMotor(ctx, destination, noiseBuffer) {
     drive(v) {
       input = Math.min(1, Math.max(0, (Math.abs(v) - 150) / 2600)); // follows current speed: ease off = lift off
       lastInput = performance.now();
+      started = true;
       if (!timer) timer = setInterval(tick, 30);
     },
-    setLevel(l) { level = l; },
+    setLevel(l) { level = l; apply(performance.now()); }, // also while idling
     /**
      * Start-up roar: one short rev (about a second, including the fade), played once.
      * peak stays below the gear-shift point, so it is one clean rev.
@@ -124,6 +130,7 @@ export function createMotor(ctx, destination, noiseBuffer) {
       script = () => peak;
       scriptStart = performance.now();
       scriptEnd = scriptStart + hold;
+      started = true;
       if (!timer) timer = setInterval(tick, 30);
     },
     /** Start-up spool: revs follow the loading counter (p 0..1), from idle up to a high rev. */

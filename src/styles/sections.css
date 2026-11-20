@@ -259,6 +259,8 @@
   font-family: var(--f-display); font-weight: 800; font-size: clamp(40px, 11vw, 64px); line-height: .95; letter-spacing: -.04em;
   margin-top: auto; font-variant-numeric: tabular-nums; text-shadow: 0 0 40px rgba(95, 227, 255, .25);
 }
+/* "about" before an approximate figure: a "~" read as a minus sign at display size. */
+.feat-approx { display: block; font-family: var(--f-mono); font-size: 12px; font-weight: 400; letter-spacing: .2em; text-transform: uppercase; color: var(--dim); text-shadow: none; margin-bottom: 4px; }
 .feat-big--word { font-size: clamp(28px, 7.4vw, 44px); letter-spacing: -.02em; line-height: 1.05; }
 .feat h3 { font-family: var(--f-display); font-weight: 600; font-size: clamp(17px, 1.8vw, 21px); line-height: 1.2; }
 .feat > p:not(.feat-meta):not(.feat-big) { color: var(--dim); font-size: 15px; }
@@ -454,7 +456,11 @@
 }
 .contact-title em { font-style: normal; color: var(--ion); text-shadow: 0 0 50px rgba(95, 227, 255, .35); }
 .contact-note { color: var(--dim); max-width: 50ch; margin-top: 24px; }
-.mail { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; margin-top: 40px; }
+.mail { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 28px 40px; margin-top: 40px; }
+.mail-list { display: grid; gap: 22px; margin: 0; min-width: 0; }
+.mail-item { display: grid; gap: 6px; min-width: 0; }
+.mail-label { font-family: var(--f-mono); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--dim); }
+.mail-item dd { margin: 0; min-width: 0; }
 .mail-addr {
   position: relative; font-family: var(--f-mono); font-size: clamp(17px, 3vw, 30px); text-decoration: none; padding-bottom: 6px;
   overflow-wrap: anywhere;

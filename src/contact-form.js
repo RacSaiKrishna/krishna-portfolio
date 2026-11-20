@@ -1,6 +1,6 @@
 /**
  * Contact form in a modal <dialog>, opened by every [data-contact-open] link (nav "Contact",
- * the "Contact me" button in 06). Those links keep real hrefs (#contact, mailto:) so the page
+ * the "Send a message" button in 06). Those links keep real hrefs (#contact, mailto:) so the page
  * still works with JavaScript off.
  *
  * Delivery, two options:

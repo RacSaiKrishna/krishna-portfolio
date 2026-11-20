@@ -7,7 +7,7 @@
  * suspended until the visitor's first interaction (key press, mouse press, or the end of a
  * touch/swipe; mouse-wheel scrolling alone does not count), and it resumes right then.
  * Until audio is running every call is a silent no-op. The moment it runs, the engine
- * (src/lib/motor.js) plays one start-up roar, then stays silent until you scroll.
+ * (src/lib/motor.js) plays one start-up roar, then idles softly and revs as you scroll.
  * The nav speaker icon mutes everything for the current visit only: every page load starts
  * with sound ON again (owner decision, 2026-11-19).
  * On iPhone/iPad the audio session is set to "playback" so sound plays even with the ring/silent
@@ -294,7 +294,10 @@ export function initSound() {
   const unlock = () => { if (enabled) boot(); };
   // Coming back to the tab (iOS suspends audio in the background): resume if allowed.
   document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "visible" && ctx && enabled) ctx.resume().catch(() => {});
+    if (!ctx) return;
+    // Hidden tab: pause all audio, so the idling engine never runs in the background.
+    if (document.visibilityState === "hidden") ctx.suspend().catch(() => {});
+    else if (enabled) ctx.resume().catch(() => {});
   });
   for (const type of ["pointerdown", "pointerup", "mousedown", "touchend", "keydown"]) {
     window.addEventListener(type, unlock, { capture: true, passive: true });

@@ -94,6 +94,7 @@ export function setupMedia() {
   let heard = false;     // played to the end during this visit to the hero
   let userMuted = false; // pressed Mute; respected until the hero is scrolled away
   let pending = false;   // wants to talk but the browser has not allowed sound yet
+  let primed = false;    // the video has been started inside a press, so it may talk later
 
   const load = () => {
     if (loaded) return;
@@ -126,7 +127,8 @@ export function setupMedia() {
   const update = () => {
     if (!armed || !inView) return;
     const want = soundEnabled() && !userMuted && !heard;
-    if (want && (video.muted || video.paused)) talk(false);
+    // From the silent loop, the voice always starts at the beginning, never mid-sentence.
+    if (want && (video.muted || video.paused)) talk(video.muted);
     else if (!want && !video.muted) silentLoop();
   };
 
@@ -141,6 +143,7 @@ export function setupMedia() {
   });
 
   sound.addEventListener("click", () => {
+    primed = true;
     if (!video.muted && !video.paused) { userMuted = true; silentLoop(); }
     else { userMuted = false; heard = false; talk(true); }
   });
@@ -150,11 +153,31 @@ export function setupMedia() {
   video.addEventListener("pause", label);
   onSoundState(update); // nav speaker icon on/off, and audio becoming available
 
-  // The first press anywhere (other than the sound controls themselves) starts the voiceover.
+  /*
+   * iPhone only lets a video play with sound if it was started inside a press. On phones the video
+   * is often below the fold at the first tap, so prime it then: start it with sound and stop it at
+   * once (the clip opens on 0.3 s of silence, so nothing is heard). Scrolling to it later may then
+   * start the voiceover without another tap.
+   */
+  const prime = () => {
+    if (primed || !soundEnabled()) return;
+    primed = true;
+    load();
+    video.muted = false;
+    video.play()?.then(() => {
+      if (inView && armed && !userMuted && !heard) { pending = false; label(); return; } // keep talking
+      video.muted = true;
+      if (inView) silentLoop();
+      else { video.pause(); video.currentTime = 0; label(); }
+    }).catch(() => { primed = false; video.muted = true; label(); });
+  };
+
+  // The first press anywhere (other than the sound controls themselves) starts the voiceover if
+  // the video is on screen, and otherwise primes it for when it scrolls into view.
   const onPress = (e) => {
-    if (!pending || !inView || !armed || !soundEnabled() || userMuted) return;
     if (e.target.closest?.(".tx-sound, .nav-sound")) return;
-    talk(true);
+    if (pending && inView && armed && soundEnabled() && !userMuted) { primed = true; talk(true); return; }
+    prime();
   };
   for (const type of ["pointerup", "touchend", "keydown", "click"]) {
     window.addEventListener(type, onPress, { capture: true, passive: true });
@@ -186,7 +209,8 @@ export function setupMedia() {
   // starts right now, inside the click (iOS Safari only allows sound from within the press itself).
   document.addEventListener("kr:enter", () => {
     armed = true;
-    if (inView && soundEnabled() && !userMuted) talk(true);
+    if (inView && soundEnabled() && !userMuted) { primed = true; talk(true); }
+    else prime();
   });
 
   const armVoice = () => {

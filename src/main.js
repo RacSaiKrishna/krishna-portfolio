@@ -9,6 +9,7 @@ import { setupMedia } from "./media.js";
 import { reduced } from "./motion.js";
 import { initSound, setSound, soundEnabled, soundRunning, soundJustUnlocked, onSoundState, sfx } from "./sound.js";
 import { setupContactForm } from "./contact-form.js";
+import { firstSwipeUnlocksSound } from "./lib/first-swipe.js";
 import global, { navSpy } from "./animations/global.js";
 import loader from "./animations/loader.js";
 import hero from "./animations/hero.js";
@@ -24,6 +25,7 @@ gsap.registerPlugin(ScrollTrigger, SplitText);
 const media = setupMedia();
 setupContactForm();
 initSound();
+firstSwipeUnlocksSound(); // phones: the first swipe starts the sound, no tap needed
 setupSoundSwitch();
 
 // Below-the-fold section modules, in page order so pins are measured top to bottom.
